@@ -83,9 +83,9 @@ public class Xbox extends XboxController {
 	 * @param button the button to check.
 	 * @return whether or not the button is pressed.
 	 */
-	public boolean getPressed(String button) {
-		if (functionMap.containsKey(button)) {
-			return functionMap.get(button).get();
+	public boolean getPressed(buttons button) {
+		if (functionMap.containsKey(button.toString())) {
+			return functionMap.get(button.toString()).get();
 		}
 		return false;
 	}
@@ -96,20 +96,20 @@ public class Xbox extends XboxController {
 	 * @param button the button to check rising edge for.
 	 * @return whether or not a rising edge was detected.
 	 */
-	public boolean when(String button) {
+	public boolean when(buttons button) {
 		//TODO: Debounce buttons
-		if (!whenMap.containsKey(button)) {
+		if (!whenMap.containsKey(button.toString())) {
 			return false;
 		}
 		
 		if (getPressed(button)) {
-			if (!whenMap.get(button)) {
-				whenMap.put(button, true);
+			if (!whenMap.get(button.toString())) {
+				whenMap.put(button.toString(), true);
 				return true;
 			}
 		}
 		else {
-			whenMap.put(button, false);
+			whenMap.put(button.toString(), false);
 		}
 		return false;
 	}
@@ -120,27 +120,27 @@ public class Xbox extends XboxController {
 	 * @param button the button to check the falling edge for.
 	 * @return whether or not an falling edge was detected.
 	 */
-	public boolean falling(String button) {
+	public boolean falling(buttons button) {
 		if (!fallingMap.containsKey(button)) {
-			Common.debug("falling map does not contain"+button);
+			Common.debug("falling map does not contain "+button.toString());
 			return false;
 		}
-		if (fallingMap.get(button)) {
+		if (fallingMap.get(button.toString())) {
 			if (!getPressed(button)) {
-				fallingMap.put(button, false);
+				fallingMap.put(button.toString(), false);
 				return true;
 				}
 			else {
-				fallingMap.put(button, true);
+				fallingMap.put(button.toString(), true);
 				return false;
 				}
 			}
 		else {
 			if (getPressed(button)) {
-				fallingMap.put(button, true);
+				fallingMap.put(button.toString(), true);
 				return false;
 			} else {
-				fallingMap.put(button, false);
+				fallingMap.put(button.toString(), false);
 				return false;
 			}
 		}
