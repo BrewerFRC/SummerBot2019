@@ -18,6 +18,10 @@ public class Xbox extends XboxController {
 	private Map<String, Supplier<Boolean>> functionMap = new HashMap<String, Supplier<Boolean>>();
 	private Map<String, Boolean> whenMap = new HashMap<String, Boolean>();
 	private Map<String, Boolean> fallingMap = new HashMap<String, Boolean>();
+	public enum buttons {
+		x, y, a, b, start, back, dPadDown, dPadLeft, dPadRight, dPadUp, leftBumper,
+		leftTrigger, rightBumper, rightTrigger, rightThumb, leftThumb 
+	}
 	
 	/**
 	 * Instantiates the controller on the specified port.
@@ -147,88 +151,88 @@ public class Xbox extends XboxController {
 	 */
 	private void setupFunctions() {
 		//Changed to private because I didn't see an reason to be public -Brent 10/11/18
-		functionMap.put("a", this::getAButton);
-		whenMap.put("a", false);
-		fallingMap.put("a", false);
+		functionMap.put(buttons.a.toString(), this::getAButton);
+		whenMap.put(buttons.a.toString(), false);
+		fallingMap.put(buttons.a.toString(), false);
 		
-		functionMap.put("b", this::getBButton);
-		whenMap.put("b", false);
-		fallingMap.put("b", false);
+		functionMap.put(buttons.b.toString(), this::getBButton);
+		whenMap.put(buttons.b.toString(), false);
+		fallingMap.put(buttons.b.toString(), false);
 		
-		functionMap.put("x", this::getXButton);
-		whenMap.put("x", false);
-		fallingMap.put("x", false);
+		functionMap.put(buttons.x.toString(), this::getXButton);
+		whenMap.put(buttons.x.toString(), false);
+		fallingMap.put(buttons.x.toString(), false);
 		
-		functionMap.put("y", this::getYButton);
-		whenMap.put("y", false);
-		fallingMap.put("y", false);
+		functionMap.put(buttons.y.toString(), this::getYButton);
+		whenMap.put(buttons.y.toString(), false);
+		fallingMap.put(buttons.y.toString(), false);
 		
-		functionMap.put("start", this::getStartButton);
-		whenMap.put("start", false);
-		fallingMap.put("start", false);
+		functionMap.put(buttons.start.toString(), this::getStartButton);
+		whenMap.put(buttons.start.toString(), false);
+		fallingMap.put(buttons.start.toString(), false);
 		
-		functionMap.put("back", this::getBackButton);
-		whenMap.put("back", false);
-		fallingMap.put("back", false);
+		functionMap.put(buttons.back.toString(), this::getBackButton);
+		whenMap.put(buttons.back.toString(), false);
+		fallingMap.put(buttons.back.toString(), false);
 		
-		functionMap.put("dPadUp", () -> {
+		functionMap.put(buttons.dPadUp.toString(), () -> {
 			return (this.getPOV() == -1) ? false : Math.abs(0 - this.getPOV()) < 45 || Math.abs(360 - this.getPOV()) < 45;
 		});
-		whenMap.put("dPadUp", false);
-		fallingMap.put("dPadUp", false);
+		whenMap.put(buttons.dPadUp.toString(), false);
+		fallingMap.put(buttons.dPadUp.toString(), false);
 		
-		functionMap.put("dPadRight", () -> {
+		functionMap.put(buttons.dPadRight.toString(), () -> {
 			return (this.getPOV() == -1) ? false : Math.abs(90 - this.getPOV()) < 45;
 		});
-		whenMap.put("dPadRight", false);
-		fallingMap.put("dPadRight", false);
+		whenMap.put(buttons.dPadRight.toString(), false);
+		fallingMap.put(buttons.dPadRight.toString(), false);
 		
-		functionMap.put("dPadDown", () -> {
+		functionMap.put(buttons.dPadDown.toString(), () -> {
 			return (this.getPOV() == -1) ? false : Math.abs(180 - this.getPOV()) < 45;
 		});
-		whenMap.put("dPadDown", false);
-		fallingMap.put("dPadDown", false);
+		whenMap.put(buttons.dPadDown.toString(), false);
+		fallingMap.put(buttons.dPadDown.toString(), false);
 		
-		functionMap.put("dPadLeft", () -> {
+		functionMap.put(buttons.dPadLeft.toString(), () -> {
 			return (this.getPOV() == -1) ? false : Math.abs(270 - this.getPOV()) < 45;
 		});
-		whenMap.put("dPadLeft", false);
-		fallingMap.put("dPadLeft", false);
+		whenMap.put(buttons.dPadLeft.toString(), false);
+		fallingMap.put(buttons.dPadLeft.toString(), false);
 		
-		functionMap.put("leftBumper", () -> {
+		functionMap.put(buttons.leftBumper.toString(), () -> {
 			return this.getBumper(GenericHID.Hand.kLeft);
 		});
-		whenMap.put("leftBumper", false);
-		fallingMap.put("leftBumper", false);
+		whenMap.put(buttons.leftBumper.toString(), false);
+		fallingMap.put(buttons.leftBumper.toString(), false);
 		
-		functionMap.put("rightBumper", () -> {
+		functionMap.put(buttons.rightBumper.toString(), () -> {
 			return this.getBumper(GenericHID.Hand.kRight);
 		});
-		whenMap.put("rightBumper", false);
-		fallingMap.put("rightBumper", false);
+		whenMap.put(buttons.rightBumper.toString(), false);
+		fallingMap.put(buttons.rightBumper.toString(), false);
 		
-		functionMap.put("leftTrigger", () -> {
+		functionMap.put(buttons.leftTrigger.toString(), () -> {
 			return deadzone(this.getLeftTrigger()) > 0;
 		});
-		whenMap.put("leftTrigger", false);
-		fallingMap.put("leftTrigger", false);
+		whenMap.put(buttons.leftTrigger.toString(), false);
+		fallingMap.put(buttons.leftTrigger.toString(), false);
 		
-		functionMap.put("rightTrigger", () -> {
+		functionMap.put(buttons.rightTrigger.toString(), () -> {
 			return deadzone(this.getRightTrigger()) > 0;
 		});
-		whenMap.put("rightTrigger", false);
-		fallingMap.put("rightTrigger", false);
+		whenMap.put(buttons.rightTrigger.toString(), false);
+		fallingMap.put(buttons.rightTrigger.toString(), false);
 		
-		functionMap.put("rightThumb", () -> {
+		functionMap.put(buttons.rightThumb.toString(), () -> {
 			return this.getRawButton(10);
 		});
-		whenMap.put("rightThumb", false);
-		fallingMap.put("rightThumb", false);
+		whenMap.put(buttons.rightThumb.toString(), false);
+		fallingMap.put(buttons.rightThumb.toString(), false);
 
-		functionMap.put("leftThumb", () -> {
+		functionMap.put(buttons.leftThumb.toString(), () -> {
 			return this.getRawButton(9);
 		});
-		whenMap.put("leftThumb", false);
-		fallingMap.put("leftThumb", false);
+		whenMap.put(buttons.leftThumb.toString(), false);
+		fallingMap.put(buttons.leftThumb.toString(), false);
 	}
 }
