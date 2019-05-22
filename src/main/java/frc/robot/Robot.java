@@ -4,11 +4,13 @@ import edu.wpi.first.wpilibj.TimedRobot;
 import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj.ADXRS450_Gyro;
+import edu.wpi.first.wpilibj.Spark;
 import edu.wpi.first.wpilibj.GenericHID;
 import edu.wpi.first.wpilibj.Compressor;
 import edu.wpi.first.wpilibj.DriverStation;
 
 public class Robot extends TimedRobot {
+  public static final Spark INTAKEMOT = new Spark(Constants.INTAKE_1);
   private Xbox driver = new Xbox(0);
 	private DriveTrain dt = new DriveTrain();
   private static final String kDefaultAuto = "Default";
@@ -60,7 +62,18 @@ public class Robot extends TimedRobot {
     
     dt.accelDrive(-forward, -turn);
 
-    if (driver.when(driver.buttons.a));
+    if (driver.when(Xbox.buttons.a)) {
+      Common.dashNum("intake power", 1);
+      INTAKEMOT.set(1); 
+    }
+    else if (driver.when(Xbox.buttons.b)) {
+      INTAKEMOT.set(-1);
+      Common.dashNum("intake power", -1);
+    }
+    else{
+      INTAKEMOT.set(0);
+    }
+      
   }
 
   @Override
