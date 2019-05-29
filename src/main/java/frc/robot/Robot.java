@@ -84,10 +84,8 @@ public class Robot extends TimedRobot {
       INTAKEMOT.set(0);
     }
 
-<<<<<<< HEAD
     Common.dashNum( "Arm Pot", arm.rawPot());
     Common.dashNum( "Measured Pot", arm.GetDegree());
-=======
     if (driver.when(Xbox.buttons.y)) {
       //open
       out.set(true);
@@ -97,7 +95,6 @@ public class Robot extends TimedRobot {
       out.set(false);
       in.set(true);
     }
->>>>>>> c7267d95482534cc39896e6d164e4f5817d87173
       
   }
 
