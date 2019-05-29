@@ -17,14 +17,15 @@ public class Constants {
 			//DRIVE_ENCODER_LA = , DRIVE_ENCODER_RA = , DRIVE_ENCODER_LB = , DRIVE_ENCODER_RB = ,
 
 			// Analog Input
-			//IR_PORT = , ARM_POT = ,
+			//IR_PORT = ,
+			ARM_POT = 3,
 
 			//ARM_MIN_DEG = , ARM_MAX_DEG = ,
 
 			// Solenoid
 			GEARBOX_PNU = 2, ARM_PNU_CLOSE = 0, ARM_PNU_OPEN = 1; // open / close may not be in the correct order
 
-	;
+	
 	public static final double
 
 	MAX_ACCEL = 0.5,

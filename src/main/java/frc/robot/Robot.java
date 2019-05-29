@@ -11,6 +11,7 @@ import edu.wpi.first.wpilibj.DriverStation;
 
 public class Robot extends TimedRobot {
   public static final Spark INTAKEMOT = new Spark(Constants.INTAKE_1);
+  private Arm arm = new Arm();
   private Xbox driver = new Xbox(0);
 	private DriveTrain dt = new DriveTrain();
   private static final String kDefaultAuto = "Default";
@@ -73,6 +74,9 @@ public class Robot extends TimedRobot {
     else{
       INTAKEMOT.set(0);
     }
+
+    Common.dashNum( "Arm Pot", arm.rawPot());
+    Common.dashNum( "Measured Pot", arm.GetDegree());
       
   }
 
