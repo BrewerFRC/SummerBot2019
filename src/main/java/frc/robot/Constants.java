@@ -17,7 +17,7 @@ public class Constants {
 			//DRIVE_ENCODER_LA = , DRIVE_ENCODER_RA = , DRIVE_ENCODER_LB = , DRIVE_ENCODER_RB = ,
 
 			// Analog Input
-			//IR_PORT = ,
+			IR_PORT = 0,
 			ARM_POT = 3,
 
 			//ARM_MIN_DEG = , ARM_MAX_DEG = ,
