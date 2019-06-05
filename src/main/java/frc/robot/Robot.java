@@ -32,7 +32,6 @@ public class Robot extends TimedRobot {
     compressor = new Compressor();
     in = new Solenoid(1);
     out = new Solenoid(0);
-    INTAKEMOT.setInverted(true);
   }
 
  
