@@ -52,6 +52,18 @@ public class Intake {
         }
     }
 
+    private void doIntake() {
+        switch (state) {
+        case IDLE:
+            break;
+        case BALL_INTAKE:
+            break;
+        case HATCH_PLACE:
+            break;
+        case BALL_PLACE:
+            break;
+    }
+
     public boolean checkLimit() {
         return intakeLimit.get();
     }
