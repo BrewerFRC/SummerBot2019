@@ -10,7 +10,7 @@ public class Constants {
 			DRIVE_FR = 1,
 			DRIVE_BL = 4,
 			DRIVE_BR = 3,
-			//ARM_M = , 
+			ARM_M = 6 , 
 
 			INTAKE_1 = 5,
 			// DIO
