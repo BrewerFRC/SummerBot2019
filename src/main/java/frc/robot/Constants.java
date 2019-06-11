@@ -19,7 +19,7 @@ public class Constants {
 
 			// Analog Input
 			IR_PORT = 0,
-			ARM_POT = 3,
+			ARM_POT = 1,
 
 			//ARM_MIN_DEG = , ARM_MAX_DEG = ,
 
@@ -27,15 +27,5 @@ public class Constants {
 			GEARBOX_PNU = 2, ARM_PNU_CLOSE = 0, ARM_PNU_OPEN = 1; // open / close may not be in the correct order
 
 	
-	public static final double
 
-	MAX_ACCEL = 0.5,
-
-			MIN_ARM_MAGNITUDE = 0.45, ARMP = 1, ARMI = 0, ARMD = 0,
-
-			ARMMAXACCEL = 0.7f, MAX_ARM_VELOCITY = 5, MIN_ARM_VELOCITY = 40, MIN_ARM_ACC = 0.45,
-
-			HEADINGP = DriveTrain.TURNMAX / 10, HEADINGI = 0, HEADINGD = 0, ARM_POT_SCALAR = 0.01889
-
-	;
 }

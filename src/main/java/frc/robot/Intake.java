@@ -4,6 +4,7 @@ import edu.wpi.first.wpilibj.SpeedControllerGroup;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj.Solenoid;
 import edu.wpi.first.wpilibj.Spark;
+import edu.wpi.first.wpilibj.DigitalInput;
 import edu.wpi.first.wpilibj.*;
 
 public class Intake {
@@ -32,7 +33,6 @@ public class Intake {
 
     public Intake() {
         irInput = new AnalogInput(Constants.IR_PORT);
-        intakeLimit = new DigitalInput(Constants.INTAKE_LIMIT);
         
         intakeMot.setInverted(true);
 
@@ -54,19 +54,19 @@ public class Intake {
     }
 
     public boolean hasHatch() {
-        if (intakeLimit.getVoltage()) {
+        if (intakeLimit.get()) {
             return true;
         }
         else {
             return false;
         }
     }
-    public boolean intakeBall() {
+    public void intakeBall() { // should be boolean
         if (!hasBall() && (!hasHatch())) {
             
         }
     }
-
+    /*
     public void update() {
         switch (state) {
         case IDLE:
@@ -79,8 +79,9 @@ public class Intake {
             break;
         case BALL_PLACE:
             break;
+        }
     }
-
+    */
     public boolean checkLimit() {
         return intakeLimit.get();
     }

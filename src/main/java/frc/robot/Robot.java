@@ -34,6 +34,11 @@ public class Robot extends TimedRobot {
     out = new Solenoid(0);
   }
 
+  @Override
+  public void disabledPeriodic() {
+    Common.dashNum("Raw Pot", arm.rawPot());
+  }
+
  
   @Override
   public void robotPeriodic() {
@@ -84,7 +89,7 @@ public class Robot extends TimedRobot {
       INTAKEMOT.set(0);
     }
 
-    arm.setPower(driver.getY(GenericHID.Hand.kRight) * .3);
+    arm.setMotor(driver.getY(GenericHID.Hand.kRight) * .3);
 
     Common.dashNum( "Arm Pot", arm.rawPot());
     Common.dashNum( "Measured Pot", arm.GetDegree());
