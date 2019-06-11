@@ -32,6 +32,7 @@ public class Intake {
 
     public Intake() {
         irInput = new AnalogInput(Constants.IR_PORT);
+        intakeLimit = new DigitalInput(Constants.INTAKE_LIMIT);
         
         intakeMot.setInverted(true);
 
@@ -52,9 +53,25 @@ public class Intake {
         }
     }
 
-    private void doIntake() {
+    public boolean hasHatch() {
+        if (intakeLimit.getVoltage()) {
+            return true;
+        }
+        else {
+            return false;
+        }
+    }
+    public boolean intakeBall() {
+        if (!hasBall() && (!hasHatch())) {
+            
+        }
+    }
+
+    public void update() {
         switch (state) {
         case IDLE:
+            break;
+        case HATCH_INTAKE:
             break;
         case BALL_INTAKE:
             break;

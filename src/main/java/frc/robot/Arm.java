@@ -18,12 +18,12 @@ public class Arm {
     public double GetDegree() {
         return 90 - (rawPot() - 0.75) / Constants.ARM_POT_SCALAR;
     }
-    public void motor(double speed) {
+     public void motor(double speed) {
         speed = -speed;
         speed = Math.max(speed, -0.55);
         speed = Math.min(speed, 0.55);
         arm.setSpeed(speed);
         SmartDashboard.putNumber("safety speed", speed);
-    }
+    }   
 
 }
