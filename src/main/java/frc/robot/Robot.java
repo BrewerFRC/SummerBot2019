@@ -36,7 +36,7 @@ public class Robot extends TimedRobot {
 
   @Override
   public void disabledPeriodic() {
-    Common.dashNum("Raw Pot", arm.rawPot());
+    arm.debug();
   }
 
  
@@ -91,8 +91,8 @@ public class Robot extends TimedRobot {
 
     arm.setMotor(driver.getY(GenericHID.Hand.kRight) * .3);
 
-    Common.dashNum( "Arm Pot", arm.rawPot());
-    Common.dashNum( "Measured Pot", arm.GetDegree());
+    arm.debug();
+    
     if (driver.when(Xbox.buttons.y)) {
       //open
       out.set(true);

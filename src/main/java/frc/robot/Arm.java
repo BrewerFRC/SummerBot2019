@@ -22,12 +22,16 @@ public class Arm {
 
 			HEADINGP = DriveTrain.TURNMAX / 10, HEADINGI = 0, HEADINGD = 0, ARM_POT_SCALAR = 0.01889
 
+            
+            
+            
 	;
     public static final Spark arm = new Spark(Constants.ARM_M);
     
     private AnalogInput pot;
 
     
+
     public Arm() {
         pot = new AnalogInput(Constants.ARM_POT);
     }
@@ -36,10 +40,15 @@ public class Arm {
         return pot.getVoltage();
     }
 
-    public double GetDegree() {
+    public double getDegree() {
         return -90 + (rawPot() - BACK_PARALLEL) / VOLTS_PER_DEGREE;
     }
 
+    public double degreesToVolts(double degrees) {
+        return VOLTS_PER_DEGREE * (degrees + 90) + BACK_PARALLEL;
+
+    }
+ 
     public void setMotor(double speed) {
         speed = -speed;
         speed = Math.max(speed, -0.55);
@@ -47,4 +56,9 @@ public class Arm {
         arm.setSpeed(speed);
         SmartDashboard.putNumber("safety speed", speed);
     }   
+
+    public void debug() {
+        Common.dashNum("Pot Degrees", getDegree());
+        Common.dashNum("Raw Pot", rawPot());
+    }
 }

@@ -24,9 +24,12 @@ public class Intake {
         IDLE,
         HATCH_INTAKE, //intake wheels until limit switch triggered pnu closed
         BALL_INTAKE, //intake wheels until ir sensor triggered pnu open
+        HAS_HATCH,
+        HAS_BALL,
         HATCH_PLACE, //wheels out till time or limit switch pnu closed
         BALL_PLACE; //spin wheels out till time or ir sensor pnu open
     }
+    public intakeStates state = intakeStates.IDLE;
 
     
     private double previousReading = 0;
@@ -61,19 +64,45 @@ public class Intake {
             return false;
         }
     }
-    public void intakeBall() { // should be boolean
-        if (!hasBall() && (!hasHatch())) {
-            
+    
+    public void intakeHatch() {
+        if (!hasGamePiece()) {
+            pnuClose();
+            setPower(-1.0);//Should pull in
+            state = intakeStates.HATCH_INTAKE;
         }
     }
-    /*
+
+    public void intakeBall() {
+        if (!hasGamePiece()) {
+            pnuOpen();
+            setPower(-1.0);//Should pull in
+            state = intakeStates.BALL_INTAKE;
+        }
+    }
+
+
     public void update() {
         switch (state) {
         case IDLE:
+            if (hasBall()) {
+                state = intakeStates.HAS_BALL;
+            } else if (checkLimit()) {
+                state = intakeStates.HAS_HATCH;
+            }
             break;
         case HATCH_INTAKE:
+            pnuClose();
+            setPower(-1.0);
+            if (hasHatch()) {
+                state = intakeStates.HAS_HATCH;
+            }
             break;
         case BALL_INTAKE:
+            break;
+        case HAS_BALL:
+            break;
+        case HAS_HATCH:
             break;
         case HATCH_PLACE:
             break;
@@ -81,9 +110,13 @@ public class Intake {
             break;
         }
     }
-    */
+    
     public boolean checkLimit() {
         return intakeLimit.get();
+    }
+
+    public boolean hasGamePiece() {
+        return checkLimit() || hasHatch();
     }
 
     private void pnuOpen() {
