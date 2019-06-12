@@ -13,7 +13,12 @@ public class Arm {
 
             ARMMAXACCEL = 0.7f, MAX_ARM_VELOCITY = 5, MIN_ARM_VELOCITY = 40, MIN_ARM_ACC = 0.45,
             
-            //front max = 4.543 , back max = 0.0085, CENTER = 2.208, FRONT_paralel = 3.918, BACK_paralel = .605, raw values
+            FRONT_MAX = 4.543 , BACK_MAX = 0.0085, CENTER = 2.208, FRONT_PARALLEL = 3.918, BACK_PARALLEL = .605,
+
+            /*
+            volts per degree is equal to (front paralel - back paralel) / 180
+            */
+            VOLTS_PER_DEGREE = (FRONT_PARALLEL - BACK_PARALLEL) / 180,
 
 			HEADINGP = DriveTrain.TURNMAX / 10, HEADINGI = 0, HEADINGD = 0, ARM_POT_SCALAR = 0.01889
 
@@ -21,6 +26,7 @@ public class Arm {
     public static final Spark arm = new Spark(Constants.ARM_M);
     
     private AnalogInput pot;
+
     
     public Arm() {
         pot = new AnalogInput(Constants.ARM_POT);
@@ -31,8 +37,9 @@ public class Arm {
     }
 
     public double GetDegree() {
-        return 90 - (rawPot() - 0.75) / ARM_POT_SCALAR;
+        return -90 + (rawPot() - BACK_PARALLEL) / VOLTS_PER_DEGREE;
     }
+
     public void setMotor(double speed) {
         speed = -speed;
         speed = Math.max(speed, -0.55);
