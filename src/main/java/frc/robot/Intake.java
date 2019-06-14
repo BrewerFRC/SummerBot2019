@@ -123,7 +123,7 @@ public class Intake {
             }
             break;
         case BALL_PLACE:
-            setPower(this..P_BALL_SHOOT);
+            setPower(this.P_BALL_SHOOT);
             if (!hasBall()) {
                 state =  intakeStates.IDLE;
                 setPower(0);

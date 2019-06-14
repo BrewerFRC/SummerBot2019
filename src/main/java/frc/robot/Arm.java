@@ -16,7 +16,7 @@ public class Arm {
             FRONT_MAX = 4.543 , BACK_MAX = 0.0085, CENTER = 2.208, FRONT_PARALLEL = 3.918, BACK_PARALLEL = .605,
             FRONT_SAFE = 4.35, BACK_SAFE = 0.065,
 
-            TOP_SPEED = 0.5,
+            TOP_SPEED = 0.8,
             /*
             volts per degree is equal to (front paralel - back paralel) / 180
             */
