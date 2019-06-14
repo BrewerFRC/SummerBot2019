@@ -73,7 +73,7 @@ public class Robot extends TimedRobot {
     double forward = 0;
 		double turn = 0;
 		forward = driver.getY(GenericHID.Hand.kLeft);
-    turn = driver.getX(GenericHID.Hand.kLeft);
+    turn = driver.getX(GenericHID.Hand.kLeft); 
     
     dt.accelDrive(-forward, -turn);
 
@@ -89,7 +89,7 @@ public class Robot extends TimedRobot {
       INTAKEMOT.set(0);
     }
 
-    arm.setMotor(driver.getY(GenericHID.Hand.kRight) * .3);
+    arm.setMotor(driver.getY(GenericHID.Hand.kRight));
 
     arm.debug();
     
