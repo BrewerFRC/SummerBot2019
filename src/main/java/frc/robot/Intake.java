@@ -11,11 +11,9 @@ public class Intake {
     private static final Spark intakeMot = new Spark(Constants.INTAKE_1);
     public static final DigitalInput intakeLimit = new DigitalInput(Constants.INTAKE_LIMIT);
 
-    public static double RECIEVE_SPEED = 0.65f;
-    public static double HOLD_SPEED = 0.25f;
-    public static double SOFT_THROW_SPEED = -0.6f;
-    public static final double FULL_SEND_SPEED = -1f;
-    public static final double BALL_DISTANCE = -1f;
+    private final double  P_BALL_INTAKE = -1.0, P_HATCH_INTAKE = -1.0,
+    P_BALL_SHOOT = 1.0, P_HATCH_PLACE = 1.0;
+    public static final double BALL_DISTANCE = 5;
     private Solenoid armClosed;
     private Solenoid armOpen;
 
@@ -57,18 +55,13 @@ public class Intake {
     }
 
     public boolean hasHatch() {
-        if (intakeLimit.get()) {
-            return true;
-        }
-        else {
-            return false;
-        }
+        return intakeLimit.get();
     }
     
     public void intakeHatch() {
         if (!hasGamePiece()) {
             pnuClose();
-            setPower(-1.0);//Should pull in
+            setPower(this.P_HATCH_INTAKE);//Should pull in
             state = intakeStates.HATCH_INTAKE;
         }
     }
@@ -76,18 +69,24 @@ public class Intake {
     public void intakeBall() {
         if (!hasGamePiece()) {
             pnuOpen();
-            setPower(-1.0);//Should pull in
+            setPower(this.P_BALL_INTAKE);//Should pull in
             state = intakeStates.BALL_INTAKE;
         }
     }
 
+    public void placeHatch() {
+        if (hasHatch() && state == intakeStates.HAS_HATCH) { //Same thing
+            state = intakeStates.HATCH_PLACE;
+            setPower(this.P_HATCH_PLACE);
+        }
+    }
 
     public void update() {
         switch (state) {
         case IDLE:
             if (hasBall()) {
                 state = intakeStates.HAS_BALL;
-            } else if (checkLimit()) {
+            } else if (hasHatch()) {
                 state = intakeStates.HAS_HATCH;
             }
             break;
@@ -99,24 +98,42 @@ public class Intake {
             }
             break;
         case BALL_INTAKE:
+            pnuOpen();
+            setPower(-1.0);
+            if (hasBall()) {
+                state = intakeStates.HAS_BALL;
+            }
             break;
         case HAS_BALL:
+            //Not sure about this
+            if (!hasBall()) {
+                state = intakeStates.IDLE;
+            }
             break;
         case HAS_HATCH:
+            if (!hasHatch()) {
+                state =  intakeStates.IDLE;
+            }
             break;
         case HATCH_PLACE:
+            setPower(this.P_HATCH_PLACE);
+            if (!hasHatch()) {
+                state =  intakeStates.IDLE;
+                setPower(0);
+            }
             break;
         case BALL_PLACE:
+            setPower(this..P_BALL_SHOOT);
+            if (!hasBall()) {
+                state =  intakeStates.IDLE;
+                setPower(0);
+            }
             break;
         }
     }
-    
-    public boolean checkLimit() {
-        return intakeLimit.get();
-    }
 
     public boolean hasGamePiece() {
-        return checkLimit() || hasHatch();
+        return hasBall() || hasHatch();
     }
 
     private void pnuOpen() {
