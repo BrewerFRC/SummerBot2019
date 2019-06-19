@@ -3,6 +3,7 @@ package frc.robot;
 import edu.wpi.first.wpilibj.TimedRobot;
 import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
+import frc.robot.Xbox.buttons;
 import edu.wpi.first.wpilibj.ADXRS450_Gyro;
 import edu.wpi.first.wpilibj.Spark;
 import edu.wpi.first.wpilibj.GenericHID;
@@ -42,6 +43,7 @@ public class Robot extends TimedRobot {
  
   @Override
   public void robotPeriodic() {
+
   }
 
 
@@ -76,35 +78,52 @@ public class Robot extends TimedRobot {
     turn = driver.getX(GenericHID.Hand.kLeft); 
     
     dt.accelDrive(-forward, -turn);
-
-    if (driver.getPressed(Xbox.buttons.a)) {
+    
+    /*
+    if (driver.getPressed(Xbox.buttons.x)) {
       Common.dashNum("intake power", 1);
       INTAKEMOT.set(1); 
     }
-    else if (driver.getPressed(Xbox.buttons.b)) {
+    else if (driver.getPressed(Xbox.buttons.y)) {
       INTAKEMOT.set(-1);
       Common.dashNum("intake power", -1);
     }
     else{
       INTAKEMOT.set(0);
     }
+    */
 
-    arm.setMotor(driver.getY(GenericHID.Hand.kRight));
-
-    arm.debug();
     
+    if (driver.getPressed(Xbox.buttons.x)) {
+      Common.debug("x");
+      arm.setTarget(-90);
+    }
+    else if (driver.getPressed(Xbox.buttons.y)) {
+      Common.debug("y");
+      arm.setTarget(0);
+    }
+    else if (driver.getPressed(Xbox.buttons.b)) {
+      Common.debug("b");
+      arm.setTarget(90);
+    }
+    
+
+    arm.update();
+    arm.debug();
+    /*
     if (driver.when(Xbox.buttons.y)) {
       //open
-      out.set(true);
+      [\]
+      [\]out.set(true);
       in.set(false);
     } else if (driver.when(Xbox.buttons.x)) {
       //close
       out.set(false);
       in.set(true);
     }
-      
+      */
   }
-
+  
   @Override
   public void testPeriodic() {
   }

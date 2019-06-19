@@ -16,7 +16,10 @@ public class Arm {
             FRONT_MAX = 4.543 , BACK_MAX = 0.0085, CENTER = 2.208, FRONT_PARALLEL = 3.918, BACK_PARALLEL = .605,
             FRONT_SAFE = 4.35, BACK_SAFE = 0.065,
 
-            TOP_SPEED = 0.8,
+            KP = 1/35.0,  //Set PID to start slowing down when error is less than 30 degrees.
+            G = 0.15,
+
+            TOP_SPEED = 1.0,
             /*
             volts per degree is equal to (front paralel - back paralel) / 180
             */
@@ -27,20 +30,36 @@ public class Arm {
             
             
             
-	;
+    ;
+    private double target = 0;
+    private double avgPot = 0;
+
     public static final Spark arm = new Spark(Constants.ARM_M);
     
     private AnalogInput pot;
 
     
-
+ 
     public Arm() {
         pot = new AnalogInput(Constants.ARM_POT);
         //arm.setInverted(true);
     }
 
+    public void update() {
+        double error = target - getDegree();
+        double output = error * KP ;
+        double radians = getDegree() * Math.PI / 180;
+        double Pg = Math.sin(radians) * G;
+        setMotor(output - Pg);
+    }
+
+    public void setTarget(double degrees) {
+        target = degrees;
+    }
+
     public double rawPot() {
-        return pot.getVoltage();
+        avgPot = avgPot * 0.9 + pot.getVoltage() * 0.1;
+        return avgPot;
     }
 
     public double getDegree() {
@@ -65,12 +84,13 @@ public class Arm {
         }
         speed = Math.max(speed, -TOP_SPEED);
         speed = Math.min(speed, TOP_SPEED);
-        arm.setSpeed(-speed);
         SmartDashboard.putNumber("arm speed", speed);
+        arm.setSpeed(-speed);
     }   
 
     public void debug() {
         Common.dashNum("Pot Degrees", getDegree());
         Common.dashNum("Raw Pot", rawPot());
+        Common.dashNum("arm target", target);
     }
 }
