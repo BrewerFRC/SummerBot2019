@@ -8,7 +8,7 @@ import edu.wpi.first.wpilibj.DigitalInput;
 import edu.wpi.first.wpilibj.*;
 
 public class Intake {
-    private static final Spark intakeMot = new Spark(Constants.INTAKE_1);
+    private static final Spark intakeMot = new Spark(Constants.INTAKE);
     public static final DigitalInput intakeLimit = new DigitalInput(Constants.INTAKE_LIMIT);
 
     private final double  P_BALL_INTAKE = -1.0, P_HATCH_INTAKE = -1.0,
@@ -16,18 +16,19 @@ public class Intake {
     public static final double BALL_DISTANCE = 5;
     private Solenoid armClosed;
     private Solenoid armOpen;
+    private Long saveTime;
 
     private AnalogInput irInput;
-    public enum intakeStates {
-        IDLE,
-        HATCH_INTAKE, //intake wheels until limit switch triggered pnu closed
-        BALL_INTAKE, //intake wheels until ir sensor triggered pnu open
-        HAS_HATCH,
-        HAS_BALL,
-        HATCH_PLACE, //wheels out till time or limit switch pnu closed
-        BALL_PLACE; //spin wheels out till time or ir sensor pnu open
-    }
-    public intakeStates state = intakeStates.IDLE;
+    private static final int
+        IDLE = 0,
+        HATCH_INTAKE = 1, //intake wheels until limit switch triggered pnu closed
+        BALL_INTAKE = 2, //intake wheels until ir sensor triggered pnu open
+        HAS_HATCH = 3,
+        HAS_BALL = 4,
+        HATCH_PLACE = 5, //wheels out till time or limit switch pnu closed
+        BALL_PLACE = 6; //spin wheels out till time or ir sensor pnu open
+
+    private int state = IDLE;
 
     
     private double previousReading = 0;
@@ -40,13 +41,13 @@ public class Intake {
         armOpen = new Solenoid(Constants.ARM_PNU_OPEN);
         armClosed = new Solenoid(Constants.ARM_PNU_CLOSE);
     }
-    public double toDist(double input){
-        double out = 23.1186 * Math.pow(0.999014, input);
+    public double getDistance(){
+        double out = 23.1186 * Math.pow(0.999014, irInput.getVoltage());
 
         return out;
     }
     public boolean hasBall() {
-        if(toDist(irInput.getVoltage()) <= BALL_DISTANCE) {
+        if(getDistance() <= BALL_DISTANCE) {
             return true;
         }
         else {
@@ -60,24 +61,44 @@ public class Intake {
     
     public void intakeHatch() {
         if (!hasGamePiece()) {
-            pnuClose();
-            setPower(this.P_HATCH_INTAKE);//Should pull in
-            state = intakeStates.HATCH_INTAKE;
+            //pnuClose();
+            //setPower(this.P_HATCH_INTAKE);//Should pull in
+            state = HATCH_INTAKE;
+        }
+    }
+
+    public void stopIntake() {
+        if (!hasGamePiece()) {
+            //pnuClose();
+            //setPower(this.P_HATCH_INTAKE);//Should pull in
+            state = IDLE;
         }
     }
 
     public void intakeBall() {
         if (!hasGamePiece()) {
-            pnuOpen();
-            setPower(this.P_BALL_INTAKE);//Should pull in
-            state = intakeStates.BALL_INTAKE;
+            //pnuOpen();
+            state = BALL_INTAKE;
         }
     }
 
     public void placeHatch() {
-        if (hasHatch() && state == intakeStates.HAS_HATCH) { //Same thing
-            state = intakeStates.HATCH_PLACE;
-            setPower(this.P_HATCH_PLACE);
+        state = HATCH_PLACE;
+        saveTime = Common.time();
+        //setPower(this.P_HATCH_PLACE);
+    }
+
+    public void ejectBall() {
+        if (hasBall()) {
+            state = BALL_PLACE;
+        }
+    }
+
+    public void placeGamePiece() {
+        if (hasHatch()) {
+            placeHatch();
+        } else if (hasBall()) {
+            ejectBall();
         }
     }
 
@@ -85,47 +106,55 @@ public class Intake {
         switch (state) {
         case IDLE:
             if (hasBall()) {
-                state = intakeStates.HAS_BALL;
+                state = HAS_BALL;
             } else if (hasHatch()) {
-                state = intakeStates.HAS_HATCH;
+                state = HAS_HATCH;
+            } else {
+                setPower(0.0);
             }
+            
             break;
         case HATCH_INTAKE:
-            pnuClose();
-            setPower(-1.0);
+            pnuClosed();
+            setPower(1.0);
             if (hasHatch()) {
-                state = intakeStates.HAS_HATCH;
+                state = HAS_HATCH;
             }
             break;
         case BALL_INTAKE:
             pnuOpen();
             setPower(-1.0);
             if (hasBall()) {
-                state = intakeStates.HAS_BALL;
+                state = HAS_BALL;
             }
             break;
         case HAS_BALL:
             //Not sure about this
             if (!hasBall()) {
-                state = intakeStates.IDLE;
+                state = IDLE;
+            } else {
+                setPower(-0.5);
             }
             break;
         case HAS_HATCH:
             if (!hasHatch()) {
-                state =  intakeStates.IDLE;
+                state =  IDLE;
+            } else {
+                setPower(0.15);
             }
             break;
         case HATCH_PLACE:
             setPower(this.P_HATCH_PLACE);
-            if (!hasHatch()) {
-                state =  intakeStates.IDLE;
-                setPower(0);
+            if (Common.time() > saveTime + 500) {
+                state =  IDLE;
+            }  else {
+                setPower(-.75);
             }
             break;
         case BALL_PLACE:
             setPower(this.P_BALL_SHOOT);
             if (!hasBall()) {
-                state =  intakeStates.IDLE;
+                state =  IDLE;
                 setPower(0);
             }
             break;
@@ -136,13 +165,13 @@ public class Intake {
         return hasBall() || hasHatch();
     }
 
-    private void pnuOpen() {
+    private void pnuClosed() {
         armOpen.set(true);
         armClosed.set(false);
     }
 
 
-    private void pnuClose() {
+    private void pnuOpen() {
         armOpen.set(false);
         armClosed.set(true);
     }
@@ -150,6 +179,13 @@ public class Intake {
 
     private void setPower(double power){
         intakeMot.set(power);
-        Common.dashNum("intake power", power);
+    }
+    public void debug() {
+        Common.dashNum("Intake Power", intakeMot.get());
+        Common.dashBool("intake has game piece", hasGamePiece());
+        Common.dashNum("intake state", state);
+        Common.dashBool("Inake has hatch", hasHatch());
+        Common.dashBool("Intake has ball", hasBall());
+        Common.dashNum("Ir reading", ;
     }
 }

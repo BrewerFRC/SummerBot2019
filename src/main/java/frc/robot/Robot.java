@@ -12,13 +12,14 @@ import edu.wpi.first.wpilibj.Compressor;
 import edu.wpi.first.wpilibj.DriverStation;
 
 public class Robot extends TimedRobot {
-  public static final Spark INTAKEMOT = new Spark(Constants.INTAKE_1);
+  //public static final Spark INTAKEMOT = new Spark(Constants.INTAKE);
   private Arm arm = new Arm();
+  private Intake intake = new Intake();
   private Xbox driver = new Xbox(0);
   private DriveTrain dt = new DriveTrain();
   private Compressor compressor;
-  private Solenoid in;
-  private Solenoid out;
+  //private Solenoid in;
+  //private Solenoid out;
   private static final String kDefaultAuto = "Default";
   private static final String kCustomAuto = "My Auto";
   private String m_autoSelected;
@@ -31,8 +32,8 @@ public class Robot extends TimedRobot {
     m_chooser.addOption("My Auto", kCustomAuto);
     SmartDashboard.putData("Auto choices", m_chooser);
     compressor = new Compressor();
-    in = new Solenoid(1);
-    out = new Solenoid(0);
+    //in = new Solenoid(1);
+    //out = new Solenoid(0);
   }
 
   @Override
@@ -93,17 +94,29 @@ public class Robot extends TimedRobot {
     }
     */
 
-    
-    if (driver.getPressed(Xbox.buttons.x)) {
-      Common.debug("x");
-      arm.setTarget(-90);
-    }
-    else if (driver.getPressed(Xbox.buttons.y)) {
-      Common.debug("y");
-      arm.setTarget(0);
+    if (driver.getPressed(Xbox.buttons.a)) {
+      //Common.debug("INTAKING HATCHES");
+      intake.intakeHatch();
     }
     else if (driver.getPressed(Xbox.buttons.b)) {
-      Common.debug("b");
+      intake.stopIntake();
+    } else if (driver.getPressed(Xbox.buttons.rightTrigger)) {
+      intake.placeGamePiece();
+    }
+
+    intake.update();
+    intake.debug();
+    
+    if (driver.getPressed(Xbox.buttons.dPadLeft)) {
+      //Common.debug("x");
+      arm.setTarget(-90);
+    }
+    else if (driver.getPressed(Xbox.buttons.dPadUp)) {
+      //Common.debug("y");
+      arm.setTarget(0);
+    }
+    else if (driver.getPressed(Xbox.buttons.dPadRight)) {
+      //Common.debug("b");
       arm.setTarget(90);
     }
     

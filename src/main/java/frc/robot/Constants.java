@@ -12,7 +12,7 @@ public class Constants {
 			DRIVE_BR = 3,
 			ARM_M = 6 , 
 
-			INTAKE_1 = 5,
+			INTAKE = 5,
 			// DIO
 			//DRIVE_ENCODER_LA = , DRIVE_ENCODER_RA = , DRIVE_ENCODER_LB = , DRIVE_ENCODER_RB = ,
 			INTAKE_LIMIT = 0, // NOT FINAL
