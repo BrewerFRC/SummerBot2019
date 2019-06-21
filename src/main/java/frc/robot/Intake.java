@@ -89,15 +89,14 @@ public class Intake {
     }
 
     public void ejectBall() {
-        if (hasBall()) {
-            state = BALL_PLACE;
-        }
+        state = BALL_PLACE;
+        saveTime = Common.time();
     }
 
     public void placeGamePiece() {
-        if (hasHatch()) {
+        if (state==HAS_HATCH) {
             placeHatch();
-        } else if (hasBall()) {
+        } else if (state==HAS_BALL) {
             ejectBall();
         }
     }
@@ -137,11 +136,11 @@ public class Intake {
             }
             break;
         case HAS_HATCH:
-            if (!hasHatch()) {
-                state =  IDLE;
-            } else {
-                setPower(0.15);
-            }
+            //if (!hasHatch()) {
+            //    state =  IDLE;
+            //} else {
+                setPower(0.25);
+            //}
             break;
         case HATCH_PLACE:
             setPower(this.P_HATCH_PLACE);
@@ -182,10 +181,10 @@ public class Intake {
     }
     public void debug() {
         Common.dashNum("Intake Power", intakeMot.get());
-        Common.dashBool("intake has game piece", hasGamePiece());
-        Common.dashNum("intake state", state);
-        Common.dashBool("Inake has hatch", hasHatch());
+        Common.dashBool("Intake has game piece", hasGamePiece());
+        Common.dashNum("Intake state", state);
+        Common.dashBool("Intake has hatch", hasHatch());
         Common.dashBool("Intake has ball", hasBall());
-        Common.dashNum("Ir reading", ;
+        Common.dashNum("Ir reading", getDistance());
     }
 }
