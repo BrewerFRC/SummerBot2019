@@ -12,8 +12,8 @@ public class Intake {
     public static final DigitalInput intakeLimit = new DigitalInput(Constants.INTAKE_LIMIT);
 
     private final double  P_BALL_INTAKE = -1.0, P_HATCH_INTAKE = -1.0,
-    P_BALL_SHOOT = 1.0, P_HATCH_PLACE = 1.0;
-    public static final double BALL_DISTANCE = 5;
+    P_BALL_SHOOT = 0.6, P_HATCH_PLACE = 1.0;
+    public static final double BALL_LOADED_VOLT = 2;
     private Solenoid armClosed;
     private Solenoid armOpen;
     private Long saveTime;
@@ -47,7 +47,7 @@ public class Intake {
         return out;
     }
     public boolean hasBall() {
-        if(getDistance() <= BALL_DISTANCE) {
+        if(irInput.getVoltage() >= BALL_LOADED_VOLT) {
             return true;
         }
         else {
@@ -131,15 +131,15 @@ public class Intake {
             //Not sure about this
             if (!hasBall()) {
                 state = IDLE;
-            } else {
-                setPower(-0.5);
+            } else if (hasBall()){
+                setPower(-0.15);
             }
             break;
         case HAS_HATCH:
             //if (!hasHatch()) {
             //    state =  IDLE;
             //} else {
-                setPower(0.25);
+            setPower(0.25);
             //}
             break;
         case HATCH_PLACE:
@@ -154,7 +154,7 @@ public class Intake {
             setPower(this.P_BALL_SHOOT);
             if (!hasBall()) {
                 state =  IDLE;
-                setPower(0);
+                setPower(0.75);
             }
             break;
         }
@@ -186,5 +186,6 @@ public class Intake {
         Common.dashBool("Intake has hatch", hasHatch());
         Common.dashBool("Intake has ball", hasBall());
         Common.dashNum("Ir reading", getDistance());
+        Common.dashNum("Raw IR", irInput.getVoltage());
     }
 }

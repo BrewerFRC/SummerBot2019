@@ -20,7 +20,7 @@ public class DriveTrain extends DifferentialDrive {
 	private static DriveTrain instance;
 
 	public int runcount = 0;
-	public static double DRIVEACCEL = 0.02, DRIVEMIN = 0.4;
+	public static double DRIVEACCEL = 0.04, DRIVEMIN = 0.4;
 
 	public static final double TURNACCEL = 0.06;
 	public static final double TANKACCEL = 0.055;

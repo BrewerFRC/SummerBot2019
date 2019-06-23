@@ -3,6 +3,7 @@ package frc.robot;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj.AnalogInput;
 import edu.wpi.first.wpilibj.Spark;
+import edu.wpi.first.wpilibj.Servo;
 
 public class Arm {
     public static final double
@@ -37,12 +38,17 @@ public class Arm {
     public static final Spark arm = new Spark(Constants.ARM_M);
     
     private AnalogInput pot;
+    public Servo camServ = new Servo(Constants.CAM_SERV);
 
     
  
     public Arm() {
         pot = new AnalogInput(Constants.ARM_POT);
         //arm.setInverted(true);
+    }
+
+    public void init() {
+        setTarget(getDegree());
     }
 
     public void update() {
@@ -56,7 +62,6 @@ public class Arm {
     public void setTarget(double degrees) {
         target = degrees;
     }
-
     public double rawPot() {
         avgPot = avgPot * 0.9 + pot.getVoltage() * 0.1;
         return avgPot;

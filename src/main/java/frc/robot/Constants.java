@@ -11,6 +11,7 @@ public class Constants {
 			DRIVE_BL = 4,
 			DRIVE_BR = 3,
 			ARM_M = 6 , 
+			CAM_SERV = 9,
 
 			INTAKE = 5,
 			// DIO

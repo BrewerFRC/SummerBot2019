@@ -10,12 +10,15 @@ import edu.wpi.first.wpilibj.GenericHID;
 import edu.wpi.first.wpilibj.Solenoid;
 import edu.wpi.first.wpilibj.Compressor;
 import edu.wpi.first.wpilibj.DriverStation;
+import edu.wpi.first.wpilibj.CameraServer;
+import edu.wpi.cscore.UsbCamera;
 
 public class Robot extends TimedRobot {
   //public static final Spark INTAKEMOT = new Spark(Constants.INTAKE);
   private Arm arm = new Arm();
   private Intake intake = new Intake();
-  private Xbox driver = new Xbox(0);
+  private Xbox front = new Xbox(0);
+  private Xbox back = new Xbox(1);
   private DriveTrain dt = new DriveTrain();
   private Compressor compressor;
   //private Solenoid in;
@@ -23,6 +26,7 @@ public class Robot extends TimedRobot {
   private static final String kDefaultAuto = "Default";
   private static final String kCustomAuto = "My Auto";
   private String m_autoSelected;
+  UsbCamera camera = CameraServer.getInstance().startAutomaticCapture();
   private final SendableChooser<String> m_chooser = new SendableChooser<>();
 
  
@@ -39,6 +43,7 @@ public class Robot extends TimedRobot {
   @Override
   public void disabledPeriodic() {
     arm.debug();
+    intake.debug();
   }
 
  
@@ -69,14 +74,29 @@ public class Robot extends TimedRobot {
   }
 
   @Override
+  public void teleopInit() {
+    arm.init();
+  }
+
+  @Override
   public void teleopPeriodic() {
+
+    //arm.camServ.setAngle((front.getX(GenericHID.Hand.kRight)+1) * 180);//VERY BAD NO DO
+    Common.dashNum("Servo angle", arm.camServ.getAngle());
 
     compressor.setClosedLoopControl(true);
 
     double forward = 0;
 		double turn = 0;
-		forward = driver.getY(GenericHID.Hand.kLeft);
-    turn = driver.getX(GenericHID.Hand.kLeft); 
+		
+    
+    if (Math.abs(front.getY(GenericHID.Hand.kLeft)) > 0.15 || Math.abs(front.getX(GenericHID.Hand.kLeft)) > 0.15) {
+      forward = front.getY(GenericHID.Hand.kLeft);
+      turn = front.getX(GenericHID.Hand.kLeft);
+    } else {
+      forward = -back.getY(GenericHID.Hand.kLeft);
+      turn = back.getX(GenericHID.Hand.kLeft);
+    }
     
     dt.accelDrive(-forward, -turn);
     
@@ -93,7 +113,7 @@ public class Robot extends TimedRobot {
       INTAKEMOT.set(0);
     }
     */
-
+    /*
     if (driver.getPressed(Xbox.buttons.a)) {
       //Common.debug("INTAKING HATCHES");
       intake.intakeHatch();
@@ -102,27 +122,110 @@ public class Robot extends TimedRobot {
       intake.stopIntake();
     } else if (driver.getPressed(Xbox.buttons.rightTrigger)) {
       intake.placeGamePiece();
+    } else if (driver.getPressed(Xbox.buttons.x)) {
+      intake.intakeBall();
     }
-
     intake.update();
     intake.debug();
     
     if (driver.getPressed(Xbox.buttons.dPadLeft)) {
       //Common.debug("x");
       arm.setTarget(-90);
-    }
-    else if (driver.getPressed(Xbox.buttons.dPadUp)) {
+    } else if (driver.getPressed(Xbox.buttons.dPadUp)) {
       //Common.debug("y");
       arm.setTarget(0);
-    }
-    else if (driver.getPressed(Xbox.buttons.dPadRight)) {
+    } else if (driver.getPressed(Xbox.buttons.dPadRight)) {
       //Common.debug("b");
       arm.setTarget(90);
+    } else if (driver.getPressed(Xbox.buttons.dPadDown)) {
+      Common.debug("Down");
+      arm.setTarget(120);
+    }
+    */
+    
+    if (front.getPressed(Xbox.buttons.y)) {
+        arm.setTarget(0);
+    }
+    if (front.getPressed(Xbox.buttons.b)) {
+        if (intake.hasBall()) {
+          arm.setTarget(30);
+        } else { //assume we have a hatch
+          arm.setTarget(90);
+        }
+    }
+    if (front.getPressed(Xbox.buttons.a)) {
+        if (intake.hasBall()) {
+          arm.setTarget(70);
+        } else { //assume we have hatch
+          arm.setTarget(90);
+        }
+    }
+    if (front.getPressed(Xbox.buttons.rightBumper)) {
+        arm.setTarget(115); //was 120
+        intake.intakeBall();
+    }
+    if (front.getPressed(Xbox.buttons.leftBumper)) {
+        arm.setTarget(90);
+        intake.intakeHatch();
+    }
+    if (front.getPressed(Xbox.buttons.rightTrigger) || front.getPressed(Xbox.buttons.leftTrigger)) {
+        intake.placeGamePiece();
+    }
+    if (front.getPressed(Xbox.buttons.x)) {
+        intake.stopIntake();
+    }
+    if (front.getPressed(Xbox.buttons.dPadUp)) {
+        arm.camServ.setAngle(30);
+    } else  if (back.getPressed(Xbox.buttons.dPadUp)) {
+      arm.camServ.setAngle(163);
     }
     
 
+    //BACK STUFF
+
+    if (back.getPressed(Xbox.buttons.y)) {
+      arm.setTarget(0);
+  }
+  if (back.getPressed(Xbox.buttons.b)) {
+      if (intake.hasBall()) {
+        arm.setTarget(-30);
+      } else { //assume we have a hatch
+        arm.setTarget(-90);
+      }
+  }
+  if (back.getPressed(Xbox.buttons.a)) {
+      if (intake.hasBall()) {
+        arm.setTarget(-70);
+      } else { //assume we have hatch
+        arm.setTarget(-90);
+      }
+  }
+  if (back.getPressed(Xbox.buttons.rightBumper)) {
+      arm.setTarget(-115);
+      intake.intakeBall();
+  }
+  if (back.getPressed(Xbox.buttons.leftBumper)) {
+      arm.setTarget(-90);
+      intake.intakeHatch();
+  }
+  if (back.getPressed(Xbox.buttons.rightTrigger) || front.getPressed(Xbox.buttons.leftTrigger)) {
+    intake.placeGamePiece();
+  }
+  if (back.getPressed(Xbox.buttons.x)) {
+    intake.stopIntake();
+  }
+  if (back.getPressed(Xbox.buttons.dPadUp)) {
+    arm.camServ.setAngle(163);
+  }else if (front.getPressed(Xbox.buttons.dPadUp)) {
+    arm.camServ.setAngle(30);
+  }
+
+
+    
+    intake.update();
+    intake.debug();
     arm.update();
-    arm.debug();
+    arm.debug(); 
     /*
     if (driver.when(Xbox.buttons.y)) {
       //open
