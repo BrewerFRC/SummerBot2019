@@ -22,9 +22,9 @@ public class Common {
 	/**
 	 * Returns true if x is between low and high values inclusive.
 	 * 
-	 * @param x, value being tested.
-	 * @param low, lowest value
-	 * @param high, highest value
+	 * @param x value being tested.
+	 * @param low lowest value
+	 * @param high highest value
 	 * @return boolean response
 	 */
 	public static boolean between(double x, double low, double high) {

@@ -55,22 +55,12 @@ public class Robot extends TimedRobot {
 
   @Override
   public void autonomousInit() {
-    m_autoSelected = m_chooser.getSelected();
-    // m_autoSelected = SmartDashboard.getString("Auto Selector", kDefaultAuto);
-    System.out.println("Auto selected: " + m_autoSelected);
+   arm.init();
   }
 
   @Override
   public void autonomousPeriodic() {
-    switch (m_autoSelected) {
-      case kCustomAuto:
-        // Put custom auto code here
-        break;
-      case kDefaultAuto:
-      default:
-        // Put default auto code here
-        break;
-    }
+    teleOpCode();
   }
 
   @Override
@@ -78,9 +68,7 @@ public class Robot extends TimedRobot {
     arm.init();
   }
 
-  @Override
-  public void teleopPeriodic() {
-
+  public void teleOpCode() {
     //arm.camServ.setAngle((front.getX(GenericHID.Hand.kRight)+1) * 180);//VERY BAD NO DO
     Common.dashNum("Servo angle", arm.camServ.getAngle());
 
@@ -91,11 +79,11 @@ public class Robot extends TimedRobot {
 		
     
     if (Math.abs(front.getY(GenericHID.Hand.kLeft)) > 0.15 || Math.abs(front.getX(GenericHID.Hand.kLeft)) > 0.15) {
-      forward = front.getY(GenericHID.Hand.kLeft);
-      turn = front.getX(GenericHID.Hand.kLeft);
+      forward = front.deadzone(front.getY(GenericHID.Hand.kLeft));
+      turn = front.deadzone(front.getX(GenericHID.Hand.kLeft));
     } else {
-      forward = -back.getY(GenericHID.Hand.kLeft);
-      turn = back.getX(GenericHID.Hand.kLeft);
+      forward = back.deadzone(-back.getY(GenericHID.Hand.kLeft));
+      turn = back.deadzone(back.getX(GenericHID.Hand.kLeft));
     }
     
     dt.accelDrive(-forward, -turn);
@@ -144,80 +132,98 @@ public class Robot extends TimedRobot {
     */
     
     if (front.getPressed(Xbox.buttons.y)) {
+        arm.camTargetFront();
         arm.setTarget(0);
     }
     if (front.getPressed(Xbox.buttons.b)) {
         if (intake.hasBall()) {
+          arm.camTargetFront();
           arm.setTarget(30);
         } else { //assume we have a hatch
+          arm.camTargetFront();
           arm.setTarget(90);
         }
     }
     if (front.getPressed(Xbox.buttons.a)) {
         if (intake.hasBall()) {
+          arm.camTargetFront();
           arm.setTarget(70);
         } else { //assume we have hatch
+          arm.camTargetFront();
           arm.setTarget(90);
         }
     }
     if (front.getPressed(Xbox.buttons.rightBumper)) {
+        arm.camTargetFront();
         arm.setTarget(115); //was 120
         intake.intakeBall();
     }
     if (front.getPressed(Xbox.buttons.leftBumper)) {
+        arm.camTargetFront();
         arm.setTarget(90);
         intake.intakeHatch();
     }
     if (front.getPressed(Xbox.buttons.rightTrigger) || front.getPressed(Xbox.buttons.leftTrigger)) {
+        arm.camTargetFront();
         intake.placeGamePiece();
     }
     if (front.getPressed(Xbox.buttons.x)) {
+        arm.camTargetFront();
         intake.stopIntake();
     }
     if (front.getPressed(Xbox.buttons.dPadUp)) {
-        arm.camServ.setAngle(30);
+        arm.camTargetFront();
     } else  if (back.getPressed(Xbox.buttons.dPadUp)) {
-      arm.camServ.setAngle(163);
+      arm.camTargetBack();
     }
     
 
     //BACK STUFF
 
     if (back.getPressed(Xbox.buttons.y)) {
+      arm.camTargetBack();
       arm.setTarget(0);
   }
   if (back.getPressed(Xbox.buttons.b)) {
       if (intake.hasBall()) {
+        arm.camTargetBack();
         arm.setTarget(-30);
       } else { //assume we have a hatch
+        arm.camTargetBack();
         arm.setTarget(-90);
       }
   }
   if (back.getPressed(Xbox.buttons.a)) {
       if (intake.hasBall()) {
+        arm.camTargetBack();
         arm.setTarget(-70);
       } else { //assume we have hatch
+        arm.camTargetBack();
         arm.setTarget(-90);
       }
   }
   if (back.getPressed(Xbox.buttons.rightBumper)) {
+      arm.camTargetBack();
       arm.setTarget(-115);
       intake.intakeBall();
   }
   if (back.getPressed(Xbox.buttons.leftBumper)) {
+      arm.camTargetBack();
       arm.setTarget(-90);
       intake.intakeHatch();
   }
   if (back.getPressed(Xbox.buttons.rightTrigger) || front.getPressed(Xbox.buttons.leftTrigger)) {
+    arm.camTargetBack();
     intake.placeGamePiece();
   }
   if (back.getPressed(Xbox.buttons.x)) {
+    arm.camTargetBack();
     intake.stopIntake();
   }
   if (back.getPressed(Xbox.buttons.dPadUp)) {
-    arm.camServ.setAngle(163);
+    arm.camTargetBack();
   }else if (front.getPressed(Xbox.buttons.dPadUp)) {
-    arm.camServ.setAngle(30);
+    arm.camTargetFront();
   }
 
 
@@ -238,6 +244,11 @@ public class Robot extends TimedRobot {
       in.set(true);
     }
       */
+  }
+
+  @Override
+  public void teleopPeriodic() {
+    teleOpCode();
   }
   
   @Override

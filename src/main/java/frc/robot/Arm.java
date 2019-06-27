@@ -59,6 +59,14 @@ public class Arm {
         setMotor(output - Pg);
     }
 
+    public void camTargetFront() {
+        camServ.setAngle(30);
+    }
+
+    public void camTargetBack() {
+        camServ.setAngle(163);
+    }
+
     public void setTarget(double degrees) {
         target = degrees;
     }
