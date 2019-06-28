@@ -176,6 +176,9 @@ public class Robot extends TimedRobot {
     } else  if (back.getPressed(Xbox.buttons.dPadUp)) {
       arm.camTargetBack();
     }
+    if (front.when(Xbox.buttons.leftThumb) && front.when(Xbox.buttons.rightThumb)) {
+      dt.toggleShift();
+    }
     
 
     //BACK STUFF
@@ -224,6 +227,9 @@ public class Robot extends TimedRobot {
     arm.camTargetBack();
   }else if (front.getPressed(Xbox.buttons.dPadUp)) {
     arm.camTargetFront();
+  }
+  if (back.when(Xbox.buttons.leftThumb) && back.when(Xbox.buttons.rightThumb)) {
+    dt.toggleShift();
   }
 
 

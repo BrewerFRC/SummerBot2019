@@ -42,6 +42,7 @@ public class DriveTrain extends DifferentialDrive {
     private Solenoid gearboxSolenoid;
 	private double driveSpeed = 0, turnSpeed = 0;
 	private double tankLeft = 0, tankRight = 0;
+	private boolean inHighGear = true;
 
 	/**
 	 * Creates an instance of DriveTrain. Motor controller and encoder channels are
@@ -66,6 +67,7 @@ public class DriveTrain extends DifferentialDrive {
 		right.setInverted(false);
 
 		instance = this;
+		shiftUp();
 	}
 
 	/**
@@ -74,6 +76,7 @@ public class DriveTrain extends DifferentialDrive {
 
 	public void shiftUp() {
 		gearboxSolenoid.set(false);
+		inHighGear = true;
 	}
 
 	/**
@@ -81,6 +84,15 @@ public class DriveTrain extends DifferentialDrive {
 	 */
 	public void shiftDown() {
 		gearboxSolenoid.set(true);
+		inHighGear = false;
+	}
+
+	public void toggleShift() {
+		if (inHighGear) {
+			shiftDown();
+		} else {
+			shiftUp();
+		}
 	}
 
 	/**
