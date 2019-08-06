@@ -90,8 +90,10 @@ public class DriveTrain extends DifferentialDrive {
 	public void toggleShift() {
 		if (inHighGear) {
 			shiftDown();
+			Common.debug("In Low Gear");
 		} else {
 			shiftUp();
+			Common.debug("In High Gear");
 		}
 	}
 
@@ -380,5 +382,7 @@ public class DriveTrain extends DifferentialDrive {
 			current = target;
 		}
 		return current;
+	}
+	public void debug() {
 	}
 }

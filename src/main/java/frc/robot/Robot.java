@@ -36,7 +36,8 @@ public class Robot extends TimedRobot {
     m_chooser.addOption("My Auto", kCustomAuto);
     SmartDashboard.putData("Auto choices", m_chooser);
     compressor = new Compressor();
-    //in = new Solenoid(1);
+    camera.setResolution(240, 180);
+    //in = new Solenoid(1); 
     //out = new Solenoid(0);
   }
 
@@ -82,7 +83,7 @@ public class Robot extends TimedRobot {
       forward = front.deadzone(front.getY(GenericHID.Hand.kLeft));
       turn = front.deadzone(front.getX(GenericHID.Hand.kLeft));
     } else {
-      forward = back.deadzone(-back.getY(GenericHID.Hand.kLeft));
+      forward = back.deadzone(back.getY(GenericHID.Hand.kLeft));
       turn = back.deadzone(back.getX(GenericHID.Hand.kLeft));
     }
     
@@ -173,8 +174,6 @@ public class Robot extends TimedRobot {
     }
     if (front.getPressed(Xbox.buttons.dPadUp)) {
         arm.camTargetFront();
-    } else  if (back.getPressed(Xbox.buttons.dPadUp)) {
-      arm.camTargetBack();
     }
     if (front.when(Xbox.buttons.leftThumb)) {
       dt.toggleShift();
@@ -184,48 +183,46 @@ public class Robot extends TimedRobot {
     //BACK STUFF
 
     if (back.getPressed(Xbox.buttons.y)) {
-      arm.camTargetBack();
+      arm.camTargetFront();
       arm.setTarget(0);
   }
   if (back.getPressed(Xbox.buttons.b)) {
       if (intake.hasBall()) {
-        arm.camTargetBack();
-        arm.setTarget(-30);
+        arm.camTargetFront();
+        arm.setTarget(30);
       } else { //assume we have a hatch
-        arm.camTargetBack();
-        arm.setTarget(-90);
+        arm.camTargetFront();
+        arm.setTarget(90);
       }
   }
   if (back.getPressed(Xbox.buttons.a)) {
       if (intake.hasBall()) {
-        arm.camTargetBack();
-        arm.setTarget(-70);
+        arm.camTargetFront();
+        arm.setTarget(70);
       } else { //assume we have hatch
-        arm.camTargetBack();
-        arm.setTarget(-90);
+        arm.camTargetFront();
+        arm.setTarget(90);
       }
   }
   if (back.getPressed(Xbox.buttons.rightBumper)) {
-      arm.camTargetBack();
-      arm.setTarget(-115);
+      arm.camTargetFront();
+      arm.setTarget(115);
       intake.intakeBall();
   }
   if (back.getPressed(Xbox.buttons.leftBumper)) {
-      arm.camTargetBack();
-      arm.setTarget(-90);
+      arm.camTargetFront();
+      arm.setTarget(90);
       intake.intakeHatch();
   }
   if (back.getPressed(Xbox.buttons.rightTrigger) || front.getPressed(Xbox.buttons.leftTrigger)) {
-    arm.camTargetBack();
+    arm.camTargetFront();
     intake.placeGamePiece();
   }
   if (back.getPressed(Xbox.buttons.x)) {
-    arm.camTargetBack();
+    arm.camTargetFront();
     intake.stopIntake();
   }
   if (back.getPressed(Xbox.buttons.dPadUp)) {
-    arm.camTargetBack();
-  }else if (front.getPressed(Xbox.buttons.dPadUp)) {
     arm.camTargetFront();
   }
   if (back.when(Xbox.buttons.leftThumb)) {
