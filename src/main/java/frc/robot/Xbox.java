@@ -84,9 +84,9 @@ public class Xbox extends XboxController {
 	 * @param button the button to check.
 	 * @return whether or not the button is pressed.
 	 */
-	public boolean getPressed(buttons button) {
-		if (functionMap.containsKey(button.toString())) {
-			return functionMap.get(button.toString()).get();
+	public boolean getPressed(buttons buttons) {
+		if (functionMap.containsKey(buttons.toString())) {
+			return functionMap.get(buttons.toString()).get();
 		}
 		return false;
 	}

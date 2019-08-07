@@ -20,6 +20,7 @@ public class Robot extends TimedRobot {
   private Xbox front = new Xbox(0);
   private Xbox back = new Xbox(1);
   private DriveTrain dt = new DriveTrain();
+  private Climber climber = new Climber();
   private Compressor compressor;
   //private Solenoid in;
   //private Solenoid out;
@@ -172,13 +173,21 @@ public class Robot extends TimedRobot {
         arm.camTargetFront();
         intake.stopIntake();
     }
-    if (front.getPressed(Xbox.buttons.dPadUp)) {
+    /*if (front.getPressed(Xbox.buttons.dPadUp)) {
         arm.camTargetFront();
-    }
+    }*/
     if (front.when(Xbox.buttons.leftThumb)) {
       dt.toggleShift();
     }
     
+    if (front.getPressed(Xbox.buttons.dPadUp)) {
+      climber.startExtend();
+    } else if (front.getPressed(Xbox.buttons.dPadDown)) {
+      climber.startRetract();
+    } else {
+      climber.toIdle();
+    }
+
 
     //BACK STUFF
 
@@ -222,12 +231,14 @@ public class Robot extends TimedRobot {
     arm.camTargetFront();
     intake.stopIntake();
   }
-  if (back.getPressed(Xbox.buttons.dPadUp)) {
+  /*if (back.getPressed(Xbox.buttons.dPadUp)) {
     arm.camTargetFront();
-  }
+  }*/
   if (back.when(Xbox.buttons.leftThumb)) {
     dt.toggleShift();
   }
+
+  
 
 
     
