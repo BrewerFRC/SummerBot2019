@@ -241,9 +241,10 @@ public class Robot extends TimedRobot {
   
 
 
-    
+    Common.dashNum("Avg DT counts.", dt.getAverageDist() );
     intake.update();
     intake.debug();
+    climber.update();
     arm.update();
     arm.debug(); 
     /*

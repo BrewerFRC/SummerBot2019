@@ -3,7 +3,12 @@ package frc.robot;
 import edu.wpi.first.wpilibj.CounterBase.EncodingType;
 import edu.wpi.first.wpilibj.Encoder;
 import edu.wpi.first.wpilibj.Solenoid;
-import edu.wpi.first.wpilibj.Spark;
+
+import com.revrobotics.CANEncoder;
+import com.revrobotics.CANSparkMax;
+import com.revrobotics.CANSparkMaxFrames;
+import com.revrobotics.CANSparkMaxLowLevel.MotorType;
+
 import edu.wpi.first.wpilibj.SpeedControllerGroup;
 import edu.wpi.first.wpilibj.drive.DifferentialDrive;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
@@ -31,12 +36,12 @@ public class DriveTrain extends DifferentialDrive {
 	public static final double DEADZONE = 0.06;
 
 	private static final double DISTANCE_PER_PULSE_L = 0.0098195208, DISTANCE_PER_PULSE_R = 0.0098293515;
-	private static final Spark frontL = new Spark(Constants.DRIVE_FL), frontR = new Spark(Constants.DRIVE_FR),
-			backL = new Spark(Constants.DRIVE_BL), backR = new Spark(Constants.DRIVE_BR);
+	private static final CANSparkMax frontL = new CANSparkMax(Constants.DRIVE_FL, CANSparkMax.MotorType.kBrushless), frontR = new CANSparkMax(Constants.DRIVE_FR, CANSparkMax.MotorType.kBrushless),
+			backL = new CANSparkMax(Constants.DRIVE_BL, CANSparkMax.MotorType.kBrushless), backR = new CANSparkMax(Constants.DRIVE_BR, CANSparkMax.MotorType.kBrushless);
 	private static final SpeedControllerGroup left = new SpeedControllerGroup(frontL, backL);
 	private static final SpeedControllerGroup right = new SpeedControllerGroup(frontR, backR);
 
-	private Encoder encoderL, encoderR;
+	private CANEncoder encoderL, encoderR;
 	//private PID pidL, pidR;
 	//private Heading heading;
     private Solenoid gearboxSolenoid;
@@ -59,6 +64,8 @@ public class DriveTrain extends DifferentialDrive {
 		//encoderR.setSamplesToAverage(10);
 		// heading = new Heading();
 		gearboxSolenoid = new Solenoid(Constants.GEARBOX_PNU);
+		encoderL = new CANEncoder(frontL);
+		encoderR = new CANEncoder(frontR);
 
 		//pidL = new PID(0.005, 0, 0, false, true, "velL");
 		//pidR = new PID(0.005, 0, 0, false, true, "velR");
@@ -140,8 +147,8 @@ public class DriveTrain extends DifferentialDrive {
 	 * 
 	 * @return the counts
 	 */
-	public int getLeftCounts() {
-		return encoderL.get();
+	public double getLeftCounts() {
+		return encoderL.getPosition();
 	}
 
 	/**
@@ -150,7 +157,7 @@ public class DriveTrain extends DifferentialDrive {
 	 * @return the distance in inches
 	 */
 	public double getLeftDist() {
-		return encoderL.getDistance();
+		return encoderL.getPosition();
 	}
 
 	/**
@@ -159,7 +166,7 @@ public class DriveTrain extends DifferentialDrive {
 	 * @return the velocity in inches/second
 	 */
 	public double getLeftVelocity() {
-		return encoderL.getRate();
+		return encoderL.getVelocity();
 	}
 
 	/**
@@ -167,8 +174,8 @@ public class DriveTrain extends DifferentialDrive {
 	 * 
 	 * @return the counts
 	 */
-	public int getRightCounts() {
-		return encoderR.get();
+	public double getRightCounts() {
+		return encoderR.getPosition();
 	}
 
 	/**
@@ -177,7 +184,7 @@ public class DriveTrain extends DifferentialDrive {
 	 * @return double - the distance in inches
 	 */
 	public double getRightDist() {
-		return encoderR.getDistance();
+		return encoderR.getPosition();
 	}
 
 	/**
@@ -186,16 +193,16 @@ public class DriveTrain extends DifferentialDrive {
 	 * @return double - the velocity in inches/second
 	 */
 	public double getRightVelocity() {
-		return encoderR.getRate();
+		return encoderR.getVelocity();
 	}
 
 	/**
 	 * Get the averaged counts between the two encoders.
 	 * 
-	 * @return int - the average counts
+	 * @return double - the average counts
 	 */
-	public int getAverageCounts() {
-		return (encoderL.get() + encoderR.get()) / 2;
+	public double getAverageCounts() {
+		return (getLeftDist() + getRightDist()) / 2.0;
 	}
 
 	/**
@@ -204,7 +211,7 @@ public class DriveTrain extends DifferentialDrive {
 	 * @return double - the average distance in inches
 	 */
 	public double getAverageDist() {
-		return (encoderL.getDistance() + encoderR.getDistance()) / 2;
+		return (getLeftDist() + getRightDist()) / 2;
 	}
 
 	/**
@@ -213,7 +220,7 @@ public class DriveTrain extends DifferentialDrive {
 	 * @return double - the average velocity in inches/second
 	 */
 	public double getAverageVelocity() {
-		return (encoderL.getRate() + encoderR.getRate()) / 2;
+		return (getLeftVelocity() + getRightVelocity()) / 2;
 	}
 
 	/**
@@ -384,5 +391,6 @@ public class DriveTrain extends DifferentialDrive {
 		return current;
 	}
 	public void debug() {
+		
 	}
 }

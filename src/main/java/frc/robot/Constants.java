@@ -6,14 +6,16 @@ public class Constants {
 	REFRESH_RATE = 5,
 
 			// PWM
-			DRIVE_FL = 2,
-			DRIVE_FR = 1,
-			DRIVE_BL = 4,
-			DRIVE_BR = 3,
 			ARM_M = 6 , 
 			CAM_SERV = 9,
 			INTAKE = 5,
-			CLIMBER = 0,
+			CLIMBER = 1,
+
+			//CAN 
+			DRIVE_FL = 10,
+			DRIVE_FR = 12,
+			DRIVE_BL = 11,
+			DRIVE_BR = 13,
 			// DIO
 			//DRIVE_ENCODER_LA = , DRIVE_ENCODER_RA = , DRIVE_ENCODER_LB = , DRIVE_ENCODER_RB = ,
 			INTAKE_LIMIT = 0, // NOT FINAL

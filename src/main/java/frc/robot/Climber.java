@@ -48,6 +48,7 @@ public class Climber {
 
 
     public void update() {
+        Common.dashStr("Climber State", state.toString());
         switch(state) {
             case IDLE:
                 setPower(0.0);
