@@ -10,7 +10,7 @@ import edu.wpi.first.wpilibj.Spark;
  */
 public class Climber {
     private static final Spark climberMotor = new Spark(Constants.CLIMBER);
-    private final double EXTEND_POWER = 0.2, RETRACT_POWER = -0.2;
+    private final double EXTEND_POWER = -0.8, RETRACT_POWER = 0.2;
 
     public enum ClimberStates {
         IDLE,
