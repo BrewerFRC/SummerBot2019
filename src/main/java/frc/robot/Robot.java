@@ -165,7 +165,7 @@ public class Robot extends TimedRobot {
         arm.setTarget(90);
         intake.intakeHatch();
     }
-    if (front.getPressed(Xbox.buttons.rightTrigger) || front.getPressed(Xbox.buttons.leftTrigger)) {
+    if (front.getPressed(Xbox.buttons.rightTrigger)) {
         arm.camTargetFront();
         intake.placeGamePiece();
     }
@@ -180,9 +180,9 @@ public class Robot extends TimedRobot {
       dt.toggleShift();
     }
     
-    if (front.getPressed(Xbox.buttons.dPadUp)) {
+    if (front.getPressed(Xbox.buttons.dPadUp) && front.getPressed(Xbox.buttons.leftTrigger)) {
       climber.startExtend();
-    } else if (front.getPressed(Xbox.buttons.dPadDown)) {
+    } else if (front.getPressed(Xbox.buttons.dPadDown) && front.getPressed(Xbox.buttons.leftTrigger)) {
       climber.startRetract();
     } else {
       climber.toIdle();
