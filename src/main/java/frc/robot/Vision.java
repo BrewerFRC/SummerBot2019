@@ -13,7 +13,7 @@ public class Vision {
 
     private double drivePower = 0.0, driveSteer = 0.0;
 
-    final private String table = "limelight";
+    final private String TABLE = "limelight";
     final double STEER_K = 0.0, DRIVE_K = 0.0, //values to be multipled by
         DESIRED_TARGET_AREA = 13.0, MAX_SPEED = 0.4;
 
@@ -39,7 +39,7 @@ public class Vision {
      * camtran	Results of a 3D position solution, 6 numbers: Translation (x,y,y) Rotation(pitch,yaw,roll)
      */
     public double getDouble( String entry) {
-        return NetworkTableInstance.getDefault().getTable("limelight").getEntry(entry).getDouble(0);
+        return NetworkTableInstance.getDefault().getTable(TABLE).getEntry(entry).getDouble(0);
     }
 
     private Boolean hasTarget() {
