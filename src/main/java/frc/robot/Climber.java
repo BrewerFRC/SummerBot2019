@@ -1,5 +1,7 @@
 package frc.robot;
 
+import java.sql.Time;
+
 import edu.wpi.first.wpilibj.Spark;
 
 /**
@@ -10,7 +12,9 @@ import edu.wpi.first.wpilibj.Spark;
  */
 public class Climber {
     private static final Spark climberMotor = new Spark(Constants.CLIMBER);
-    private final double EXTEND_POWER = -0.8, RETRACT_POWER = 0.2;
+    private static final Spark climberMotor2 = new Spark(Constants.CLIMBER2);
+    private final double EXTEND_POWER = -0.9, RETRACT_POWER = 0.18;
+    private long climbTime;
 
     public enum ClimberStates {
         IDLE,
@@ -26,14 +30,24 @@ public class Climber {
 
     }
 
+    public void init() {
+        startRetract();
+    }
+
     private void setPower(double power) {
         Common.dashNum("Climber Power", power);
         climberMotor.set(power);
+        climberMotor2.set(power);
     }
 
     public void startExtend() {
-        Common.debug("Climber starting to extend");
-        state = ClimberStates.EXTEND;
+        if (state != ClimberStates.EXTEND) {
+            Common.debug("Climber starting to extend");
+            climbTime = Common.time()+1250;
+            state = ClimberStates.EXTEND;
+        } else {
+            //Common.debug("Climber tried to extend while extending.");
+        }
     }
 
     public void startRetract() {
@@ -42,22 +56,27 @@ public class Climber {
     }
 
     public void toIdle() {
-        Common.debug("Climber moving to IDLE");
-        state = ClimberStates.IDLE;
+        if (state != ClimberStates.EXTEND){
+            state = ClimberStates.IDLE;
+            Common.debug("Climber moving to IDLE");
+        }
     }
 
 
     public void update() {
         Common.dashStr("Climber State", state.toString());
         switch(state) {
-            case IDLE:
-                setPower(0.0);
+        case EXTEND:
+            setPower(EXTEND_POWER);
+            if (Common.time() >= climbTime) {
+                state = ClimberStates.IDLE;
+            }
             break;
-            case EXTEND:
-                setPower(this.EXTEND_POWER);
+        case RETRACT:
+            setPower(RETRACT_POWER);
             break;
-            case RETRACT:
-                setPower(this.RETRACT_POWER);
+        case IDLE:
+            setPower(0.0);
             break;
 
         }

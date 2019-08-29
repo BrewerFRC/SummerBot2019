@@ -46,6 +46,9 @@ public class Robot extends TimedRobot {
   public void disabledPeriodic() {
     arm.debug();
     intake.debug();
+    if (front.getPressed(Xbox.buttons.start)) {
+      Common.debug("start button pressed");
+    }
   }
 
  
@@ -68,6 +71,7 @@ public class Robot extends TimedRobot {
   @Override
   public void teleopInit() {
     arm.init();
+    climber.startRetract();
   }
 
   public void teleOpCode() {
@@ -179,14 +183,19 @@ public class Robot extends TimedRobot {
     if (front.when(Xbox.buttons.leftThumb)) {
       dt.toggleShift();
     }
+
+    // CLIMBER
     
-    if (front.getPressed(Xbox.buttons.dPadUp) && front.getPressed(Xbox.buttons.leftTrigger)) {
+    if (front.getPressed(Xbox.buttons.start)) {
+      Common.debug("start button appears to be pressed");
       climber.startExtend();
-    } else if (front.getPressed(Xbox.buttons.dPadDown) && front.getPressed(Xbox.buttons.leftTrigger)) {
+    } 
+    if (front.getPressed(Xbox.buttons.dPadDown)) {
       climber.startRetract();
     } else {
       climber.toIdle();
     }
+    climber.update();
 
 
     //BACK STUFF

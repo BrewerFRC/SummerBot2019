@@ -10,6 +10,7 @@ public class Constants {
 			CAM_SERV = 9,
 			INTAKE = 5,
 			CLIMBER = 1,
+			CLIMBER2 = 0,
 
 			//CAN 
 			DRIVE_FL = 10,
