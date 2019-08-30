@@ -10,7 +10,8 @@ import edu.wpi.first.wpilibj.GenericHID;
 import edu.wpi.first.wpilibj.Solenoid;
 import edu.wpi.first.wpilibj.Compressor;
 import edu.wpi.first.wpilibj.DriverStation;
-import edu.wpi.first.wpilibj.CameraServer;
+//import edu.wpi.first.wpilibj.CameraServer;
+import edu.wpi.first.cameraserver.CameraServer;
 import edu.wpi.cscore.UsbCamera;
 
 public class Robot extends TimedRobot {
@@ -27,7 +28,7 @@ public class Robot extends TimedRobot {
   private static final String kDefaultAuto = "Default";
   private static final String kCustomAuto = "My Auto";
   private String m_autoSelected;
-  UsbCamera camera = CameraServer.getInstance().startAutomaticCapture();
+  private UsbCamera camera = CameraServer.getInstance().startAutomaticCapture();
   private final SendableChooser<String> m_chooser = new SendableChooser<>();
 
  
@@ -37,7 +38,7 @@ public class Robot extends TimedRobot {
     m_chooser.addOption("My Auto", kCustomAuto);
     SmartDashboard.putData("Auto choices", m_chooser);
     compressor = new Compressor();
-    camera.setResolution(240, 180);
+    camera.setResolution(160, 120);
     //in = new Solenoid(1); 
     //out = new Solenoid(0);
   }
@@ -92,7 +93,7 @@ public class Robot extends TimedRobot {
       turn = back.deadzone(back.getX(GenericHID.Hand.kLeft));
     }
     
-    dt.accelDrive(-forward, -turn);
+    dt.accelDrive(-forward *0.75, -turn *0.75);
     
     /*
     if (driver.getPressed(Xbox.buttons.x)) {
@@ -190,10 +191,8 @@ public class Robot extends TimedRobot {
       Common.debug("start button appears to be pressed");
       climber.startExtend();
     } 
-    if (front.getPressed(Xbox.buttons.dPadDown)) {
+    else if (front.getPressed(Xbox.buttons.dPadDown)) {
       climber.startRetract();
-    } else {
-      climber.toIdle();
     }
     climber.update();
 

@@ -69,6 +69,7 @@ public class Climber {
         case EXTEND:
             setPower(EXTEND_POWER);
             if (Common.time() >= climbTime) {
+                Common.debug("Climb timed out, moving to IDLE");
                 state = ClimberStates.IDLE;
             }
             break;
