@@ -28,7 +28,6 @@ public class Robot extends TimedRobot {
   private static final String kDefaultAuto = "Default";
   private static final String kCustomAuto = "My Auto";
   private String m_autoSelected;
-  private UsbCamera camera = CameraServer.getInstance().startAutomaticCapture();
   private final SendableChooser<String> m_chooser = new SendableChooser<>();
 
  
@@ -38,7 +37,8 @@ public class Robot extends TimedRobot {
     m_chooser.addOption("My Auto", kCustomAuto);
     SmartDashboard.putData("Auto choices", m_chooser);
     compressor = new Compressor();
-    camera.setResolution(160, 120);
+    UsbCamera camera = CameraServer.getInstance().startAutomaticCapture();
+    camera.setResolution(160, 80);
     //in = new Solenoid(1); 
     //out = new Solenoid(0);
   }
@@ -55,7 +55,6 @@ public class Robot extends TimedRobot {
  
   @Override
   public void robotPeriodic() {
-
   }
 
 
@@ -187,12 +186,9 @@ public class Robot extends TimedRobot {
 
     // CLIMBER
     
-    if (front.getPressed(Xbox.buttons.start)) {
+    if (front.getPressed(Xbox.buttons.start) && front.getPressed(Xbox.buttons.back)) {
       Common.debug("start button appears to be pressed");
       climber.startExtend();
-    } 
-    else if (front.getPressed(Xbox.buttons.dPadDown)) {
-      climber.startRetract();
     }
     climber.update();
 
