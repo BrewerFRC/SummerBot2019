@@ -37,8 +37,7 @@ public class Robot extends TimedRobot {
     m_chooser.addOption("My Auto", kCustomAuto);
     SmartDashboard.putData("Auto choices", m_chooser);
     compressor = new Compressor();
-    UsbCamera camera = CameraServer.getInstance().startAutomaticCapture();
-    camera.setResolution(160, 80);
+    CameraServer.getInstance().startAutomaticCapture(0);
     //in = new Solenoid(1); 
     //out = new Solenoid(0);
   }
