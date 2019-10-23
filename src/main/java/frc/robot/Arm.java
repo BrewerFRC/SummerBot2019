@@ -14,7 +14,8 @@ public class Arm {
 
             ARMMAXACCEL = 0.7f, MAX_ARM_VELOCITY = 5, MIN_ARM_VELOCITY = 40, MIN_ARM_ACC = 0.45,
             
-            FRONT_MAX = 4.543 , BACK_MAX = 0.0085, CENTER = 2.208, FRONT_PARALLEL = 3.918, BACK_PARALLEL = .605,
+            FRONT_MAX = 4.543 , BACK_MAX = 0.0085, CENTER = 2.208, FRONT_PARALLEL = 3.91 //was 3.918 //WAS ALSO 3.75
+            , BACK_PARALLEL = .605,
             FRONT_SAFE = 4.35, BACK_SAFE = 0.065,
 
             KP = 1/35.0,  //Set PID to start slowing down when error is less than 30 degrees.
