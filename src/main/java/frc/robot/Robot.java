@@ -23,6 +23,7 @@ public class Robot extends TimedRobot {
   private DriveTrain dt = new DriveTrain();
   private Climber climber = new Climber();
   private Compressor compressor;
+  
   //private Solenoid in;
   //private Solenoid out;
   private static final String kDefaultAuto = "Default";
@@ -46,9 +47,20 @@ public class Robot extends TimedRobot {
   public void disabledPeriodic() {
     arm.debug();
     intake.debug();
+    dt.gyro.debug();
     if (front.getPressed(Xbox.buttons.start)) {
       Common.debug("start button pressed");
     }
+    if (front.when(Xbox.buttons.rightBumper)) {
+      dt.gyro.calibrate();
+      Common.debug("Gyro calibrated"); 
+    } else if (front.when(Xbox.buttons.rightTrigger)) {
+      dt.gyro.reset();
+      Common.debug("Gyro reset");
+    }
+
+    
+    
   }
 
  
@@ -79,9 +91,9 @@ public class Robot extends TimedRobot {
 
     compressor.setClosedLoopControl(true);
 
+    // Drivetrain
     double forward = 0;
 		double turn = 0;
-		
     
     if (Math.abs(front.getY(GenericHID.Hand.kLeft)) > 0.15 || Math.abs(front.getX(GenericHID.Hand.kLeft)) > 0.15) {
       forward = front.deadzone(front.getY(GenericHID.Hand.kLeft));
@@ -92,6 +104,21 @@ public class Robot extends TimedRobot {
     }
     
     dt.accelDrive(-forward *0.75, -turn *0.75);
+
+    if (front.getPressed(Xbox.buttons.dPadUp)) {
+      dt.setTargetHeading(0);
+    }
+    if (front.getPressed(Xbox.buttons.dPadRight)) {
+      dt.setTargetHeading(90);
+    }
+    if (front.getPressed(Xbox.buttons.dPadDown)) {
+      dt.setTargetHeading(180);
+    }
+    if (front.getPressed(Xbox.buttons.dPadLeft)) {
+      dt.setTargetHeading(270);
+    }
+    dt.update();
+    dt.gyro.debug();
     
     /*
     if (driver.getPressed(Xbox.buttons.x)) {

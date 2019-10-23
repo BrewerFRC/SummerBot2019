@@ -14,7 +14,7 @@ public class Arm {
 
             ARMMAXACCEL = 0.7f, MAX_ARM_VELOCITY = 5, MIN_ARM_VELOCITY = 40, MIN_ARM_ACC = 0.45,
             
-            FRONT_MAX = 4.543 , BACK_MAX = 0.0085, CENTER = 2.208, FRONT_PARALLEL = 3.91 //was 3.918 //WAS ALSO 3.75
+            FRONT_MAX = 4.543 , BACK_MAX = 0.0085, CENTER = 2.208, FRONT_PARALLEL = 3.9  //was 3.918 //WAS ALSO 3.75
             , BACK_PARALLEL = .605,
             FRONT_SAFE = 4.35, BACK_SAFE = 0.065,
 
@@ -72,6 +72,9 @@ public class Arm {
         target = degrees;
     }
     public double rawPot() {
+        if (avgPot == 0) {
+           avgPot = pot.getVoltage();
+        }
         avgPot = avgPot * 0.9 + pot.getVoltage() * 0.1;
         return avgPot;
     }

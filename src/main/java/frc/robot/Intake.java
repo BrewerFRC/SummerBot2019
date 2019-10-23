@@ -12,7 +12,8 @@ public class Intake {
     public static final DigitalInput intakeLimit = new DigitalInput(Constants.INTAKE_LIMIT);
 
     private final double  P_BALL_INTAKE = -1.0, P_HATCH_INTAKE = -1.0,
-    P_BALL_SHOOT = 0.6, P_HATCH_PLACE = 1.0;
+    P_BALL_SHOOT = 1,//was .6
+    P_HATCH_PLACE = 1.0;
     public static final double BALL_LOADED_VOLT = 2;
     private Solenoid armClosed;
     private Solenoid armOpen;
@@ -154,7 +155,7 @@ public class Intake {
             setPower(this.P_BALL_SHOOT);
             if (!hasBall()) {
                 state =  IDLE;
-                setPower(0.75);
+                setPower(1.0); //was 0.75
             }
             break;
         }

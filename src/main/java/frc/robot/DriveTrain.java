@@ -21,9 +21,11 @@ import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
  * @author Evan McCoy
  * @author Brent Roberts
  */
+
 public class DriveTrain extends DifferentialDrive {
 	private static DriveTrain instance;
-
+	
+	public Gyro gyro = new Gyro();
 	public int runcount = 0;
 	public static double DRIVEACCEL = 0.04, DRIVEMIN = 0.4;
 
@@ -48,6 +50,8 @@ public class DriveTrain extends DifferentialDrive {
 	private double driveSpeed = 0, turnSpeed = 0;
 	private double tankLeft = 0, tankRight = 0;
 	private boolean inHighGear = true;
+	private boolean headingHold = false;
+	private long targetHeading = 0;
 
 	/**
 	 * Creates an instance of DriveTrain. Motor controller and encoder channels are
@@ -244,6 +248,14 @@ public class DriveTrain extends DifferentialDrive {
 	 * @param target - the target drive value from -1 to 1
 	 * @return double - the allowed drive value for this cycle.
 	 */
+	public double deadzone(double value) {
+		if (value <= 0.15){
+			if(value >= -0.15){
+				return 0.0;
+			}
+		}
+		return value;	
+	}
 	public double driveAccelCurve(double target) {
 		// nullzone
 
@@ -310,10 +322,17 @@ public class DriveTrain extends DifferentialDrive {
 	 * @param turn  - the turn left/right value from -1 to 1.
 	 */
 	public void accelDrive(double drive, double turn) {
+		if (headingHold) {
+			if ( !(deadzone(drive) == 0 && deadzone(turn) == 0) ) {
+				headingHold = false;
+			}
+		}
 		drive = driveAccelCurve(drive);
 		turn = turnAccelCurve(turn);
 		SmartDashboard.putNumber("Power: ", drive);
-		arcadeDrive(drive, -turn);
+		if (!headingHold) {
+			arcadeDrive(drive, -turn);
+		}
 	}
 
 	/**
@@ -390,6 +409,33 @@ public class DriveTrain extends DifferentialDrive {
 		}
 		return current;
 	}
+	public void setTargetHeading(int heading){
+		targetHeading = heading;
+		headingHold = true;
+
+	}
+	public void update() {
+		double MAX_POWER=0.6;
+		double P = MAX_POWER/27;   //Max power @ 27 degrees
+		if (headingHold) {
+			long error = gyro.getHeading() - targetHeading;
+			if (error>180) {
+				error= error-360;
+			}
+			double power = error * P;
+			if (power > MAX_POWER){
+				power = MAX_POWER;
+			}
+			if (power < -MAX_POWER){
+				power = -MAX_POWER;
+			}
+			arcadeDrive(0,-power);
+			//arcadeDrive(0,0);
+			Common.dashNum("turn power", power);
+		}
+
+	} 
+
 	public void debug() {
 		
 	}
