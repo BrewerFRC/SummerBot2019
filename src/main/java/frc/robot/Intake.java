@@ -93,6 +93,10 @@ public class Intake {
         saveTime = Common.time();
     }
 
+    public void cubeEject() {
+        ejectBall();
+    }
+
     public void placeGamePiece() {
         if (state==HAS_HATCH) {
             placeHatch();

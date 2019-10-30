@@ -23,6 +23,7 @@ public class Robot extends TimedRobot {
   private DriveTrain dt = new DriveTrain();
   private Climber climber = new Climber();
   private Compressor compressor;
+  private Vision vision = new Vision(dt);
   //private Solenoid in;
   //private Solenoid out;
   private static final String kDefaultAuto = "Default";
@@ -46,6 +47,7 @@ public class Robot extends TimedRobot {
   public void disabledPeriodic() {
     arm.debug();
     intake.debug();
+    vision.debug();
     if (front.getPressed(Xbox.buttons.start)) {
       Common.debug("start button pressed");
     }
@@ -82,16 +84,18 @@ public class Robot extends TimedRobot {
     double forward = 0;
 		double turn = 0;
 		
-    
-    if (Math.abs(front.getY(GenericHID.Hand.kLeft)) > 0.15 || Math.abs(front.getX(GenericHID.Hand.kLeft)) > 0.15) {
-      forward = front.deadzone(front.getY(GenericHID.Hand.kLeft));
-      turn = front.deadzone(front.getX(GenericHID.Hand.kLeft));
+    if (front.getPressed(buttons.dPadRight)) {
+      vision.update();
     } else {
-      forward = back.deadzone(back.getY(GenericHID.Hand.kLeft));
-      turn = back.deadzone(back.getX(GenericHID.Hand.kLeft));
+      if (Math.abs(front.getY(GenericHID.Hand.kLeft)) > 0.15 || Math.abs(front.getX(GenericHID.Hand.kLeft)) > 0.15) {
+        forward = front.deadzone(front.getY(GenericHID.Hand.kLeft));
+        turn = front.deadzone(front.getX(GenericHID.Hand.kLeft));
+      } else {
+        forward = back.deadzone(back.getY(GenericHID.Hand.kLeft));
+        turn = back.deadzone(back.getX(GenericHID.Hand.kLeft));
+      }
+      dt.accelDrive(-forward *0.75, -turn *0.75);  
     }
-    
-    dt.accelDrive(-forward *0.75, -turn *0.75);
     
     /*
     if (driver.getPressed(Xbox.buttons.x)) {
@@ -176,9 +180,9 @@ public class Robot extends TimedRobot {
         arm.camTargetFront();
         intake.stopIntake();
     }
-    /*if (front.getPressed(Xbox.buttons.dPadUp)) {
-        arm.camTargetFront();
-    }*/
+    if (front.getPressed(Xbox.buttons.dPadUp)) {
+        intake.cubeEject();
+    }
     if (front.when(Xbox.buttons.leftThumb)) {
       dt.toggleShift();
     }
@@ -249,7 +253,7 @@ public class Robot extends TimedRobot {
     intake.debug();
     climber.update();
     arm.update();
-    arm.debug(); 
+    arm.debug();
     /*
     if (driver.when(Xbox.buttons.y)) {
       //open

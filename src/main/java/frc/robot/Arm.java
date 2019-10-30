@@ -14,7 +14,7 @@ public class Arm {
 
             ARMMAXACCEL = 0.7f, MAX_ARM_VELOCITY = 5, MIN_ARM_VELOCITY = 40, MIN_ARM_ACC = 0.45,
             
-            FRONT_MAX = 4.543 , BACK_MAX = 0.0085, CENTER = 2.208, FRONT_PARALLEL = 3.918, BACK_PARALLEL = .605,
+            FRONT_MAX = 4.543 , BACK_MAX = 0.0085, CENTER = 2.207, FRONT_PARALLEL = 3.847, BACK_PARALLEL = .605,
             FRONT_SAFE = 4.35, BACK_SAFE = 0.065,
 
             KP = 1/35.0,  //Set PID to start slowing down when error is less than 30 degrees.
@@ -22,7 +22,7 @@ public class Arm {
 
             TOP_SPEED = 1.0,
             /*
-            volts per degree is equal to (front paralel - back paralel) / 180
+            Volts per degree is equal to (front parallel - back parallel) / 180
             */
             VOLTS_PER_DEGREE = (FRONT_PARALLEL - BACK_PARALLEL) / 180,
 
@@ -71,7 +71,11 @@ public class Arm {
         target = degrees;
     }
     public double rawPot() {
-        avgPot = avgPot * 0.9 + pot.getVoltage() * 0.1;
+        if (avgPot == 0) {
+            avgPot = pot.getVoltage();
+        } else {
+            avgPot = avgPot * 0.9 + pot.getVoltage() * 0.1;
+        }
         return avgPot;
     }
 
