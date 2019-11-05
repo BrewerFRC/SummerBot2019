@@ -22,6 +22,7 @@ public class Robot extends TimedRobot {
   private DriveTrain dt = new DriveTrain();
   private Climber climber = new Climber();
   private Compressor compressor;
+  private Vision vision = new Vision(dt, arm, intake);
   //private Solenoid in;
   //private Solenoid out;
   private static final String kDefaultAuto = "Default";

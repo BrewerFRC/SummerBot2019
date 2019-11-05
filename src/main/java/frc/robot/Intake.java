@@ -164,13 +164,13 @@ public class Intake {
         return hasBall() || hasHatch();
     }
 
-    private void pnuClosed() {
+    public void pnuClosed() {
         armOpen.set(true);
         armClosed.set(false);
     }
 
 
-    private void pnuOpen() {
+    public void pnuOpen() {
         armOpen.set(false);
         armClosed.set(true);
     }

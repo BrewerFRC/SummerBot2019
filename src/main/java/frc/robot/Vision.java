@@ -1,6 +1,9 @@
 package frc.robot;
 
+import edu.wpi.first.cameraserver.CameraServer;
 import edu.wpi.first.networktables.*;
+import edu.wpi.first.wpilibj.SerialPort.StopBits;
+import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 
 /**
  * A class to incoroporate vision from a limelight.
@@ -9,17 +12,46 @@ import edu.wpi.first.networktables.*;
  * @author Brent Roberts
  */
 public class Vision {
+    public enum States {
+        OFF,
+        START,
+        APPROACH,
+        AT_TARGET,
+        BACK_UP,
+        STOP;
+    }
+    private long saveTime;
+
+    private States state = States.OFF;
+
     private boolean hasTarget = false;
 
     private double drivePower = 0.0, driveSteer = 0.0;
 
     final private String TABLE = "limelight";
+
+    private static NetworkTableInstance table = null;
+
     final double STEER_K = 0.0, DRIVE_K = 0.0, //values to be multipled by
         DESIRED_TARGET_AREA = 13.0, MAX_SPEED = 0.4;
+    
+    private DriveTrain dt;
+    private Arm arm;
+    private Intake intake;
 
-    public Vision() {
-
+    public Vision(DriveTrain dt, Arm arm, Intake intake) {
+        this.dt = dt;
+        this.arm = arm;
+        this.intake = intake;
     }
+    
+	public static enum LIGHTMODE {
+		eOn, eOff, eBlink
+	}
+
+	public static enum CAMERAMODE{
+		eVision, eDriver
+	}
 
     /**
      * A function to return data from limelight
@@ -47,22 +79,94 @@ public class Vision {
         return getDouble("tv") >= 1.0;
     }
 
-    public void update() {
-        hasTarget = hasTarget();
+    public void setLimelight(boolean OnOff) {
+        //set limelight on or off
+    }
+
+    //determines the distiance of the target and moves towords target using drive.
+    //returns True if at Vision Target.
+    public boolean approachTarget() {
+        boolean atTarget = false;
         if (hasTarget) {
             double targetArea = getDouble("ta"); //in percentage of image
-            double HOffset = getDouble("tx"), VOffset = getDouble("ty");
+            double HOffset = getDouble("tx");
+            //double VOffset = getDouble("ty");
 
             driveSteer =  HOffset * STEER_K;
             drivePower = (this.DESIRED_TARGET_AREA - targetArea) *DRIVE_K;
             if (drivePower > this.MAX_SPEED) {
                 driveSteer = MAX_SPEED;
             }
+            if (targetArea >= DESIRED_TARGET_AREA) {
+                atTarget = true;
+            } else {
+                atTarget = false;
+            }
 
-            Common.dashNum("Vetrical offset", VOffset);
+            //Common.dashNum("Vetrical offset", VOffset);
             Common.dashNum("Horizental offset", HOffset);
             Common.dashNum("targetArea", targetArea);
-        
+        } else {
+            driveSteer = 0;
+            drivePower = 0;
+        }
+        dt.arcadeDrive(drivePower, driveSteer);
+        return atTarget;
+    }
+
+    // Sets vision to STOP if not already OFF
+    public void stop() {
+        if (state != States.OFF) {
+            state = States.STOP;
+        }
+    }
+
+    // Either starts vision track, or keeps it running
+    public void go() {
+       if (state == States.OFF && intake.hasGamePiece() == false) {
+           state = States.START;
+       } 
+    }
+
+    public void update() {
+        hasTarget = hasTarget();
+        switch(state) {
+        case OFF:
+            //CAMERAMODE = eDriver;
+            setLimelight(false);
+            break;
+        case START:
+            //CAMERAMODE = eVision;
+            setLimelight(true);
+            arm.setTarget(90);
+            intake.pnuClosed();
+            state = States.APPROACH;
+            break;
+        case APPROACH:
+            //Drive toward target
+            if (approachTarget() == true) {
+                state = States.AT_TARGET;
+            }
+            break;
+        case AT_TARGET:
+            if (intake.hasGamePiece() == true) {
+                saveTime = Common.time();
+                state = States.BACK_UP;
+            } else {
+                intake.intakeHatch();
+            }
+            break;
+        case BACK_UP:
+            if (saveTime + 500 >= Common.time()) {
+                state = States.STOP;
+            } else {
+                dt.arcadeDrive(-.3, 0); 
+            }
+            break;
+        case STOP:
+            dt.arcadeDrive(0, 0);
+            state = States.OFF;
+            break;
         }
         Common.dashBool("Has vision target", hasTarget);
     }
