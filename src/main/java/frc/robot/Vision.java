@@ -30,12 +30,12 @@ public class Vision {
     private double drivePower = 0.0, driveSteer = 0.0;
 
     final private String TABLE = "limelight";
-    final double STEER_K = 0.1, //values to be multipled by 
-        DRIVE_K = 0.075 , //Drive at 40% power when at 6.8 away from target area
+    final double STEER_K = 0.1, //Was 0.12 values to be multipled by 
+        DRIVE_K = 0.125 , //Was .15 Drive at 40% power when at 6.8 away from target area
         DESIRED_TARGET_AREA = 6.8
         ,
-        MAX_SPEED = 0.4, MIN_SPEED = 0.15,
-        MAX_TURN = 0.25, MIN_TURN = 0.1;
+        MAX_SPEED = 0.6, MIN_SPEED = 0.2,
+        MAX_TURN = 0.5, MIN_TURN = 0.1; //max was .4
 
     public Vision(DriveTrain dt, Arm arm, Intake intake) {
         this.dt = dt;
@@ -69,8 +69,17 @@ public class Vision {
         return getDouble("tv") >= 1.0;
     }
 
-    public void setLimelight(boolean OnOff) {
+    private void setControl(String entry, double  value) {
+        NetworkTableInstance.getDefault().getTable(TABLE).getEntry(entry).setNumber(value);
+    }
+
+    public void setLimelight(boolean On) {
         //set limelight on or off
+        if (On) {
+            setControl("ledMode", 0); //on
+        } else {
+            setControl("ledMode", 1);
+        }
     }
 
     public boolean approachTarget() {
@@ -82,14 +91,14 @@ public class Vision {
             if (Common.between(HOffset, -0.2, 0.2)) {
                 driveSteer = 0;
             } else {
-                if (driveSteer > 0) {
+                if (HOffset > 0) {
                     driveSteer =  HOffset * STEER_K;
                     if (driveSteer > this.MAX_TURN) {
                         driveSteer = this.MAX_TURN;
                     } else if (driveSteer < this.MIN_TURN) {
                         driveSteer = this.MIN_TURN;
                     }
-                } else if (driveSteer < 0) {
+                } else if (HOffset < 0) {
                     driveSteer =  HOffset * STEER_K;
                     if (driveSteer < -this.MAX_TURN) {
                         driveSteer = -this.MAX_TURN;
@@ -166,7 +175,7 @@ public class Vision {
             }
             break;
         case BACK_UP:
-            if (saveTime + 500 >= Common.time()) {
+            if (saveTime + 500 <= Common.time()) {
                 state = States.STOP;
             } else {
                 dt.arcadeDrive(-.3, 0); 
