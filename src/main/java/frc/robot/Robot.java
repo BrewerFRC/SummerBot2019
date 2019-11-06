@@ -23,7 +23,7 @@ public class Robot extends TimedRobot {
   private DriveTrain dt = new DriveTrain();
   private Climber climber = new Climber();
   private Compressor compressor;
-  private Vision vision = new Vision(dt);
+  private Vision vision = new Vision(dt, arm, intake);
   //private Solenoid in;
   //private Solenoid out;
   private static final String kDefaultAuto = "Default";
@@ -85,7 +85,7 @@ public class Robot extends TimedRobot {
 		double turn = 0;
 		
     if (front.getPressed(buttons.dPadRight)) {
-      vision.update();
+
     } else {
       if (Math.abs(front.getY(GenericHID.Hand.kLeft)) > 0.15 || Math.abs(front.getX(GenericHID.Hand.kLeft)) > 0.15) {
         forward = front.deadzone(front.getY(GenericHID.Hand.kLeft));
@@ -139,6 +139,12 @@ public class Robot extends TimedRobot {
       arm.setTarget(120);
     }
     */
+
+    if (front.getPressed(Xbox.buttons.dPadRight)) {
+      vision.go();
+    } else {
+      vision.stop();
+    }
     
     if (front.getPressed(Xbox.buttons.y)) {
         arm.camTargetFront();
@@ -254,6 +260,8 @@ public class Robot extends TimedRobot {
     climber.update();
     arm.update();
     arm.debug();
+    vision.update();
+    vision.debug();
     /*
     if (driver.when(Xbox.buttons.y)) {
       //open

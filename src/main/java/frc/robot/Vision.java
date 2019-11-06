@@ -7,22 +7,40 @@ import edu.wpi.first.networktables.*;
  * 
  * @author Brewer FIRST Robotics Team 4564
  * @author Brent Roberts
+ * @author Samuel Woodward
  */
 public class Vision {
+    public enum States {
+        OFF,
+        START,
+        APPROACH,
+        AT_TARGET,
+        BACK_UP,
+        STOP;
+    }
+    private long saveTime;
+
+    private States state = States.OFF;
+
     private boolean hasTarget = false;
     DriveTrain dt;
+    Arm arm;
+    Intake intake;
 
     private double drivePower = 0.0, driveSteer = 0.0;
 
     final private String TABLE = "limelight";
     final double STEER_K = 0.1, //values to be multipled by 
         DRIVE_K = 0.075 , //Drive at 40% power when at 6.8 away from target area
-        DESIRED_TARGET_AREA = 8.829,
-        MAX_SPEED = 0.4, MIN_SPEED = 0.1,
+        DESIRED_TARGET_AREA = 6.8
+        ,
+        MAX_SPEED = 0.4, MIN_SPEED = 0.15,
         MAX_TURN = 0.25, MIN_TURN = 0.1;
 
-    public Vision(DriveTrain dt) {
+    public Vision(DriveTrain dt, Arm arm, Intake intake) {
         this.dt = dt;
+        this.arm = arm;
+        this.intake = intake;
     }
 
     /**
@@ -51,8 +69,12 @@ public class Vision {
         return getDouble("tv") >= 1.0;
     }
 
-    public void update() {
-        hasTarget = hasTarget();
+    public void setLimelight(boolean OnOff) {
+        //set limelight on or off
+    }
+
+    public boolean approachTarget() {
+        boolean atTarget = false;
         Common.dashBool("Has Vision Target", hasTarget);
         double targetArea = getDouble("ta"); //in percentage of image
         double HOffset = getDouble("tx"), VOffset = getDouble("ty");
@@ -82,6 +104,11 @@ public class Vision {
             } else if (drivePower < this.MIN_SPEED) {
                 drivePower = MIN_SPEED;
             }
+            if (targetArea >= DESIRED_TARGET_AREA) {
+                atTarget = true;
+            } else {
+                atTarget = false;
+            }
             
         
         } else {
@@ -93,12 +120,71 @@ public class Vision {
         Common.dashNum("Horizontal offset", HOffset);
         Common.dashNum("targetArea", targetArea);
         this.dt.arcadeDrive(drivePower, driveSteer);
+        return atTarget;
+    }
+
+    // Sets vision to STOP if not already OFF
+    public void stop() {
+        if (state != States.OFF) {
+            state = States.STOP;
+        }
+    }
+
+    // Either starts vision track, or keeps it running
+    public void go() {
+       if (state == States.OFF && intake.hasGamePiece() == false) {
+           state = States.START;
+       } 
+    }
+
+    public void update() {
+        hasTarget = hasTarget();
+        switch(state) {
+        case OFF:
+            //CAMERAMODE = eDriver;
+            setLimelight(false);
+            break;
+        case START:
+            //CAMERAMODE = eVision;
+            setLimelight(true);
+            arm.setTarget(90);
+            intake.pnuClosed();
+            state = States.APPROACH;
+            break;
+        case APPROACH:
+            //Drive toward target
+            if (approachTarget() == true) {
+                state = States.AT_TARGET;
+            }
+            break;
+        case AT_TARGET:
+            if (intake.hasGamePiece() == true) {
+                saveTime = Common.time();
+                state = States.BACK_UP;
+            } else {
+                intake.intakeHatch();
+            }
+            break;
+        case BACK_UP:
+            if (saveTime + 500 >= Common.time()) {
+                state = States.STOP;
+            } else {
+                dt.arcadeDrive(-.3, 0); 
+            }
+            break;
+        case STOP:
+            dt.arcadeDrive(0, 0);
+            state = States.OFF;
+            break;
+        }
+        Common.dashBool("Has vision target", hasTarget);
     }
 
 
     public void debug() {
         Common.dashNum("Vision steer", driveSteer);
         Common.dashNum("Vision drive", drivePower);
+        Common.dashStr("Current State", state.toString());
     }
 
 }
