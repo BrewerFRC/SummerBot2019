@@ -51,6 +51,9 @@ public class Robot extends TimedRobot {
     if (front.getPressed(Xbox.buttons.start)) {
       Common.debug("start button pressed");
     }
+    if (front.getPressed(Xbox.buttons.dPadUp)) {
+      vision.setLimelight(true);
+    }
   }
 
  
@@ -83,10 +86,13 @@ public class Robot extends TimedRobot {
 
     double forward = 0;
 		double turn = 0;
-		
-    if (front.getPressed(buttons.dPadRight)) {
 
+    if (front.getPressed(Xbox.buttons.dPadUp)) {
+      vision.pickUp();
+    } else if (front.getPressed(Xbox.buttons.dPadDown)) {
+      vision.place();
     } else {
+      vision.stop();
       if (Math.abs(front.getY(GenericHID.Hand.kLeft)) > 0.15 || Math.abs(front.getX(GenericHID.Hand.kLeft)) > 0.15) {
         forward = front.deadzone(front.getY(GenericHID.Hand.kLeft));
         turn = front.deadzone(front.getX(GenericHID.Hand.kLeft));
@@ -95,55 +101,6 @@ public class Robot extends TimedRobot {
         turn = back.deadzone(back.getX(GenericHID.Hand.kLeft));
       }
       dt.accelDrive(-forward *0.75, -turn *0.75);  
-    }
-    
-    /*
-    if (driver.getPressed(Xbox.buttons.x)) {
-      Common.dashNum("intake power", 1);
-      INTAKEMOT.set(1); 
-    }
-    else if (driver.getPressed(Xbox.buttons.y)) {
-      INTAKEMOT.set(-1);
-      Common.dashNum("intake power", -1);
-    }
-    else{
-      INTAKEMOT.set(0);
-    }
-    */
-    /*
-    if (driver.getPressed(Xbox.buttons.a)) {
-      //Common.debug("INTAKING HATCHES");
-      intake.intakeHatch();
-    }
-    else if (driver.getPressed(Xbox.buttons.b)) {
-      intake.stopIntake();
-    } else if (driver.getPressed(Xbox.buttons.rightTrigger)) {
-      intake.placeGamePiece();
-    } else if (driver.getPressed(Xbox.buttons.x)) {
-      intake.intakeBall();
-    }
-    intake.update();
-    intake.debug();
-    
-    if (driver.getPressed(Xbox.buttons.dPadLeft)) {
-      //Common.debug("x");
-      arm.setTarget(-90);
-    } else if (driver.getPressed(Xbox.buttons.dPadUp)) {
-      //Common.debug("y");
-      arm.setTarget(0);
-    } else if (driver.getPressed(Xbox.buttons.dPadRight)) {
-      //Common.debug("b");
-      arm.setTarget(90);
-    } else if (driver.getPressed(Xbox.buttons.dPadDown)) {
-      Common.debug("Down");
-      arm.setTarget(120);
-    }
-    */
-
-    if (front.getPressed(Xbox.buttons.dPadRight)) {
-      vision.go();
-    } else {
-      vision.stop();
     }
     
     if (front.getPressed(Xbox.buttons.y)) {
@@ -185,9 +142,6 @@ public class Robot extends TimedRobot {
     if (front.getPressed(Xbox.buttons.x)) {
         arm.camTargetFront();
         intake.stopIntake();
-    }
-    if (front.getPressed(Xbox.buttons.dPadUp)) {
-        intake.cubeEject();
     }
     if (front.when(Xbox.buttons.leftThumb)) {
       dt.toggleShift();

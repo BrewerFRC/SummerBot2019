@@ -12,9 +12,13 @@ import edu.wpi.first.networktables.*;
 public class Vision {
     public enum States {
         OFF,
-        START,
-        APPROACH,
-        AT_TARGET,
+        START_PICKUP,
+        START_PLACE,
+        APPROACH_PICKUP,
+        APPROACH_PLACE,
+        AT_TARGET_PICKUP,
+        AT_TARGET_PLACE,
+        AT_TARGET_PLACE_WAIT,
         BACK_UP,
         STOP;
     }
@@ -30,11 +34,11 @@ public class Vision {
     private double drivePower = 0.0, driveSteer = 0.0;
 
     final private String TABLE = "limelight";
-    final double STEER_K = 0.1, //Was 0.12 values to be multipled by 
+    final double STEER_K = 0.08, //Was 0.12 values to be multipled by 
         DRIVE_K = 0.125 , //Was .15 Drive at 40% power when at 6.8 away from target area
-        DESIRED_TARGET_AREA = 6.8
-        ,
-        MAX_SPEED = 0.6, MIN_SPEED = 0.2,
+        DESIRED_TARGET_AREA_PICKUP = 7,
+        DESIRED_TARGET_AREA_PLACE = 7.1,
+        MAX_SPEED = 0.6, MIN_SPEED = 0.25,
         MAX_TURN = 0.5, MIN_TURN = 0.1; //max was .4
 
     public Vision(DriveTrain dt, Arm arm, Intake intake) {
@@ -82,7 +86,7 @@ public class Vision {
         }
     }
 
-    public boolean approachTarget() {
+    public boolean approachTarget(double desiredArea) {
         boolean atTarget = false;
         Common.dashBool("Has Vision Target", hasTarget);
         double targetArea = getDouble("ta"); //in percentage of image
@@ -107,13 +111,13 @@ public class Vision {
                     }
                 }
             }
-            drivePower = (this.DESIRED_TARGET_AREA - targetArea) *DRIVE_K;
+            drivePower = (desiredArea - targetArea) *DRIVE_K;
             if (drivePower > this.MAX_SPEED) {
                 drivePower = MAX_SPEED;
             } else if (drivePower < this.MIN_SPEED) {
                 drivePower = MIN_SPEED;
             }
-            if (targetArea >= DESIRED_TARGET_AREA) {
+            if (targetArea >= desiredArea) {
                 atTarget = true;
             } else {
                 atTarget = false;
@@ -140,11 +144,17 @@ public class Vision {
     }
 
     // Either starts vision track, or keeps it running
-    public void go() {
+    public void pickUp() {
        if (state == States.OFF && intake.hasGamePiece() == false) {
-           state = States.START;
+           state = States.START_PICKUP;
        } 
     }
+
+    public void place() {
+        if (state == States.OFF) {
+            state = States.START_PLACE;
+        } 
+     }
 
     public void update() {
         hasTarget = hasTarget();
@@ -153,25 +163,48 @@ public class Vision {
             //CAMERAMODE = eDriver;
             setLimelight(false);
             break;
-        case START:
+        case START_PICKUP:
             //CAMERAMODE = eVision;
             setLimelight(true);
             arm.setTarget(90);
             intake.pnuClosed();
-            state = States.APPROACH;
+            state = States.APPROACH_PICKUP;
             break;
-        case APPROACH:
+        case START_PLACE:
+            //CAMERAMODE = eVision;
+            setLimelight(true);
+            arm.setTarget(90);
+            intake.pnuClosed();
+            state = States.APPROACH_PLACE;
+            break;
+        case APPROACH_PICKUP:
             //Drive toward target
-            if (approachTarget() == true) {
-                state = States.AT_TARGET;
+            if (approachTarget(DESIRED_TARGET_AREA_PICKUP) == true) {
+                state = States.AT_TARGET_PICKUP;
             }
             break;
-        case AT_TARGET:
+        case APPROACH_PLACE:
+            //Drive toward target
+            if (approachTarget(DESIRED_TARGET_AREA_PLACE) == true) {
+                state = States.AT_TARGET_PLACE;
+            }
+            break;
+        case AT_TARGET_PICKUP:
             if (intake.hasGamePiece() == true) {
                 saveTime = Common.time();
                 state = States.BACK_UP;
             } else {
                 intake.intakeHatch();
+            }
+            break;
+        case AT_TARGET_PLACE:
+                intake.placeHatch();
+                state = States.AT_TARGET_PLACE_WAIT;
+            break;
+        case AT_TARGET_PLACE_WAIT:
+            if (saveTime + 500 <=Common.time()) {
+                saveTime = Common.time();
+                state = States.BACK_UP;
             }
             break;
         case BACK_UP:
