@@ -34,6 +34,7 @@ public class Robot extends TimedRobot {
  
   @Override
   public void robotInit() {
+    //vision.setLimelight(false);
     m_chooser.setDefaultOption("Default Auto", kDefaultAuto);
     m_chooser.addOption("My Auto", kCustomAuto);
     SmartDashboard.putData("Auto choices", m_chooser);
@@ -53,6 +54,8 @@ public class Robot extends TimedRobot {
     }
     if (front.getPressed(Xbox.buttons.dPadUp)) {
       vision.setLimelight(true);
+    } else {
+      vision.setLimelight(false);
     }
   }
 

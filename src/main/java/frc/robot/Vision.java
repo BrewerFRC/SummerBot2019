@@ -36,7 +36,7 @@ public class Vision {
     final private String TABLE = "limelight";
     final double STEER_K = 0.08, //Was 0.12 values to be multipled by 
         DRIVE_K = 0.125 , //Was .15 Drive at 40% power when at 6.8 away from target area
-        DESIRED_TARGET_AREA_PICKUP = 7,
+        DESIRED_TARGET_AREA_PICKUP = 7.6, //7 in shop
         DESIRED_TARGET_AREA_PLACE = 7.1,
         MAX_SPEED = 0.6, MIN_SPEED = 0.25,
         MAX_TURN = 0.5, MIN_TURN = 0.1; //max was .4
@@ -228,5 +228,4 @@ public class Vision {
         Common.dashNum("Vision drive", drivePower);
         Common.dashStr("Current State", state.toString());
     }
-
 }
