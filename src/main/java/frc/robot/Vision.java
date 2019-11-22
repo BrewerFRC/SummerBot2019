@@ -161,7 +161,7 @@ public class Vision {
         switch(state) {
         case OFF:
             //CAMERAMODE = eDriver;
-            setLimelight(false);
+            setLimelight(true);
             break;
         case START_PICKUP:
             //CAMERAMODE = eVision;
