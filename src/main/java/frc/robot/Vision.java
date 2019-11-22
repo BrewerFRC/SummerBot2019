@@ -35,9 +35,9 @@ public class Vision {
 
     final private String TABLE = "limelight";
     final double STEER_K = 0.08, //Was 0.12 values to be multipled by 
-        DRIVE_K = 0.125 , //Was .15 Drive at 40% power when at 6.8 away from target area
-        DESIRED_TARGET_AREA_PICKUP = 7.6, //7 in shop
-        DESIRED_TARGET_AREA_PLACE = 7.1,
+        DRIVE_K = 0.095,  //was 0.125
+        DESIRED_TARGET_AREA_PICKUP = 7, //7 in shop
+        DESIRED_TARGET_AREA_PLACE = 6.5,  //was 6.9
         MAX_SPEED = 0.6, MIN_SPEED = 0.25,
         MAX_TURN = 0.5, MIN_TURN = 0.1; //max was .4
 
@@ -132,7 +132,8 @@ public class Vision {
         Common.dashNum("Vertical offset", VOffset);
         Common.dashNum("Horizontal offset", HOffset);
         Common.dashNum("targetArea", targetArea);
-        this.dt.arcadeDrive(drivePower, driveSteer);
+        //this.dt.arcadeDrive(drivePower, driveSteer);
+        this.dt.accelDrive(drivePower, -driveSteer);     
         return atTarget;
     }
 
@@ -208,7 +209,7 @@ public class Vision {
             }
             break;
         case BACK_UP:
-            if (saveTime + 500 <= Common.time()) {
+            if (saveTime + 1000 <= Common.time()) {
                 state = States.STOP;
             } else {
                 dt.arcadeDrive(-.3, 0); 
